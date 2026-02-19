@@ -9,12 +9,12 @@ public class WorkoutExerciseModel
     // Foreign keys
     [Required]
     public int WorkoutId { get; set; }
-    public WorkoutModel ? Workout { get; set; }
+    public WorkoutModel Workout { get; set; } = null!;
 
     [Required]
     [Display(Name = "Övning")]
     public int ExerciseId { get; set; }
-    public ExerciseModel ? Exercise { get; set; }
+    public ExerciseModel Exercise { get; set; } = null!;
 
     [Range(0, double.MaxValue, ErrorMessage = "Vikt måste vara 0 eller högre.")]
     [Display(Name = "Vikt (kg)")]
