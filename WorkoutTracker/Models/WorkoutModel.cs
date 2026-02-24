@@ -32,5 +32,6 @@ public class WorkoutModel
     public string? UserId { get; set; }
 
     // Relations
+    [Display(Name = "Övningar")]
     public List<WorkoutExerciseModel> WorkoutExercises { get; set; } = [];
 }
