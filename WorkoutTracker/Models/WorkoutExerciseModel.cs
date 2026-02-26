@@ -34,5 +34,5 @@ public class WorkoutExerciseModel
 
     [Range(0, 1440, ErrorMessage = "Tiden måste vara 0 eller högre.")]
     [Display(Name = "Tid (minuter)")]
-    public int Duration { get; set; } // Duration in minutes
+    public int? Duration { get; set; } // Duration in minutes
 }
