@@ -110,7 +110,7 @@ namespace WorkoutTracker.Data.Migrations
                     Sets = table.Column<int>(type: "INTEGER", nullable: true),
                     Reps = table.Column<int>(type: "INTEGER", nullable: true),
                     Distance = table.Column<double>(type: "REAL", nullable: true),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false)
+                    Duration = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -134,10 +134,16 @@ namespace WorkoutTracker.Data.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Bröst" },
-                    { 2, "Ben" },
-                    { 3, "Rygg" },
-                    { 4, "Kondition" }
+                    { 1, "Kondition" },
+                    { 2, "Bröst" },
+                    { 3, "Axlar" },
+                    { 4, "Rygg" },
+                    { 5, "Bålstyrka" },
+                    { 6, "Armar" },
+                    { 7, "Ben" },
+                    { 8, "Ben Baksida/Rumpa" },
+                    { 9, "Rörlighet" },
+                    { 10, "Övrigt" }
                 });
 
             migrationBuilder.InsertData(
@@ -147,8 +153,8 @@ namespace WorkoutTracker.Data.Migrations
                 {
                     { 1, "Styrketräning" },
                     { 2, "Löpning" },
-                    { 3, "Cykling" },
-                    { 4, "Yoga" }
+                    { 3, "Cykel" },
+                    { 4, "Övrigt" }
                 });
 
             migrationBuilder.InsertData(
@@ -156,10 +162,22 @@ namespace WorkoutTracker.Data.Migrations
                 columns: new[] { "Id", "CategoryId", "Name" },
                 values: new object[,]
                 {
-                    { 1, 1, "Bänkpress" },
-                    { 2, 2, "Knäböj" },
-                    { 3, 3, "Marklyft" },
-                    { 4, 4, "Löpband" }
+                    { 1, 1, "Intervaller (löpband)" },
+                    { 2, 1, "Löpning (löpband)" },
+                    { 3, 1, "Intervaller (cykel)" },
+                    { 4, 1, "Långdistans" },
+                    { 5, 2, "Bänkpress" },
+                    { 6, 3, "Axelpress" },
+                    { 7, 4, "Lat pulldown" },
+                    { 8, 5, "Sit-ups" },
+                    { 9, 6, "Biceps curl" },
+                    { 10, 7, "Benpress" },
+                    { 11, 7, "Benböj" },
+                    { 12, 8, "Hip Thrust" },
+                    { 13, 9, "Yoga" },
+                    { 14, 9, "Pilates" },
+                    { 15, 9, "Stretching" },
+                    { 16, 10, "Simning" }
                 });
 
             migrationBuilder.CreateIndex(

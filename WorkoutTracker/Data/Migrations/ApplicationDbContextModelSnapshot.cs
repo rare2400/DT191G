@@ -242,22 +242,52 @@ namespace WorkoutTracker.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Bröst"
+                            Name = "Kondition"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Ben"
+                            Name = "Bröst"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Rygg"
+                            Name = "Axlar"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Kondition"
+                            Name = "Rygg"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Bålstyrka"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Armar"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Ben"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Ben Baksida/Rumpa"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Rörlighet"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Övrigt"
                         });
                 });
 
@@ -286,25 +316,97 @@ namespace WorkoutTracker.Data.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
-                            Name = "Bänkpress"
+                            Name = "Intervaller (löpband)"
                         },
                         new
                         {
                             Id = 2,
-                            CategoryId = 2,
-                            Name = "Knäböj"
+                            CategoryId = 1,
+                            Name = "Löpning (löpband)"
                         },
                         new
                         {
                             Id = 3,
-                            CategoryId = 3,
-                            Name = "Marklyft"
+                            CategoryId = 1,
+                            Name = "Intervaller (cykel)"
                         },
                         new
                         {
                             Id = 4,
+                            CategoryId = 1,
+                            Name = "Långdistans"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoryId = 2,
+                            Name = "Bänkpress"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CategoryId = 3,
+                            Name = "Axelpress"
+                        },
+                        new
+                        {
+                            Id = 7,
                             CategoryId = 4,
-                            Name = "Löpband"
+                            Name = "Lat pulldown"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CategoryId = 5,
+                            Name = "Sit-ups"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CategoryId = 6,
+                            Name = "Biceps curl"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CategoryId = 7,
+                            Name = "Benpress"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CategoryId = 7,
+                            Name = "Benböj"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CategoryId = 8,
+                            Name = "Hip Thrust"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CategoryId = 9,
+                            Name = "Yoga"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CategoryId = 9,
+                            Name = "Pilates"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CategoryId = 9,
+                            Name = "Stretching"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CategoryId = 10,
+                            Name = "Simning"
                         });
                 });
 
@@ -317,7 +419,7 @@ namespace WorkoutTracker.Data.Migrations
                     b.Property<double?>("Distance")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("Duration")
+                    b.Property<int?>("Duration")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ExerciseId")
@@ -402,12 +504,12 @@ namespace WorkoutTracker.Data.Migrations
                         new
                         {
                             Id = 3,
-                            Name = "Cykling"
+                            Name = "Cykel"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Yoga"
+                            Name = "Övrigt"
                         });
                 });
 
