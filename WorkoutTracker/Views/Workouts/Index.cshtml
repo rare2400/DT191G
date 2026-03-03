@@ -1,59 +1,57 @@
 @model IEnumerable<WorkoutTracker.Models.WorkoutModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Mina träningspass";
 }
 
-<h1>Index</h1>
+<div class="container">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Duration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WorkoutType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Duration)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WorkoutType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <h1>Mina träningspass</h1>
+
+    <form asp-action="Index" method="get" class="d-flex">
+        <select name="workoutTypeId" asp-items="ViewBag.WorkoutTypeId" class="form-select me-2">
+            <option value="">Alla träningstyper</option>
+        </select>
+
+        <button type="submit" class="btn btn-outline-dark">
+            Filtrera
+        </button>
+    </form>
+
+    <div>
+        <a asp-action="Create" class="btn btn-primary mt-3">Lägg till nytt pass</a>
+    </div>
+
+    <div class="row mt-4">
+        @if (Model == null || !Model.Any())
+        {
+            <p>
+                Du har inte registrerat några träningspass ännu.
+            </p>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <section class="card shadow-sm h-100 p-4">
+                        <h2>@item.WorkoutType?.Name</h2>
+                        <p>@Html.DisplayNameFor(model => model.Date): @item.Date.ToString("dd-MM-yyyy")</p>
+                        <p>@Html.DisplayNameFor(model => model.Duration): @item.Duration min</p>
+                        @if (item.Notes != null)
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Notes): @item.Notes</p>
+                        }
+
+                        <div class="d-flex justify-content-end">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary px-3 mx-1">Visa</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark px-3 mx-1">Ändra</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3 mx-1">Ta bort</a>
+                        </div>
+
+                    </section>
+                </div>
+            }
+        }
+    </div>
+</div>
