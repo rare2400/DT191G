@@ -1,48 +1,69 @@
 @model WorkoutTracker.Models.WorkoutModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Ditt träningspass";
 }
 
-<h1>Details</h1>
+<div class="row mt-4">
+    <div class="d-flex justify-content-end">
+        <a asp-action="Index" class="btn btn-sm btn-outline-dark">Tillbaka till mina pass</a>
+    </div>
 
-<div>
-    <h4>WorkoutModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Duration)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Duration)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WorkoutType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WorkoutType.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="col-md-4 mt-3">
+        <section class="card shadow-sm mb-4">
+            <div class="card-header py-3 text-center">
+                <h1>@Html.DisplayFor(model => model.WorkoutType.Name)</h1>
+            </div>
+            <div class="card-body p-4">
+                <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Date):</span> @Html.DisplayFor(model =>
+                    model.Date)</p>
+                <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Duration):</span> @Html.DisplayFor(model =>
+                    model.Duration)min</p>
+                <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Notes):</span> @Html.DisplayFor(model =>
+                    model.Notes)</p>
+
+                <h2 class="fs-4">Övningar</h2>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Övning</th>
+                            <th>Set</th>
+                            <th>Reps</th>
+                            <th>Vikt (kg)</th>
+                        </tr>
+                    </thead>
+                    @if (Model.WorkoutExercises == null || !Model.WorkoutExercises.Any())
+                    {
+                        <p>
+                            Det finns inga övningar registrerade för detta pass.
+                        </p>
+                    }
+                    else
+                    {
+                        @foreach (var exercise in Model.WorkoutExercises)
+                        {
+                            <tbody>
+                                <tr>
+                                    <td>@exercise.Exercise?.Name</td>
+                                    <td>@exercise.Sets</td>
+                                    <td>@exercise.Reps</td>
+                                    <td>@exercise.Weight kg</td>
+                                </tr>
+                            </tbody>
+
+                        }
+                    }
+                </table>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary px-3 mx-1">Ändra</a>
+                    <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-outline-danger px-3 mx-1">Ta
+                        bort</a>
+                </div>
+        </section>
+
+        <div class="d-flex justify-content-center">
+            <a asp-action="Index" class="btn btn-outline-dark">Tillbaka till mina pass</a>
+        </div>
+    </div>
 </div>
