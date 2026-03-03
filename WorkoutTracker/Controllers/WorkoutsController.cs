@@ -36,11 +36,21 @@ namespace WorkoutTracker.Controllers
                 .Where(w => w.UserId == CurrentUserId);
 
         // GET: Workouts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? workoutTypeId)
         {
-            var workouts = await UserWorkouts
-                .Include(w => w.WorkoutType)
-                .ToListAsync();
+            PopulateDropdowns(workoutTypeId);
+
+            IQueryable<WorkoutModel> workoutsQuery = UserWorkouts;
+
+            if (workoutTypeId.HasValue)
+            {
+                workoutsQuery = workoutsQuery.Where(w => w.WorkoutTypeId == workoutTypeId);
+            }
+
+            var workouts = await workoutsQuery
+            .Include(w => w.WorkoutType)
+            .OrderByDescending(w => w.Date)
+            .ToListAsync();
 
             return View(workouts);
         }
@@ -48,9 +58,12 @@ namespace WorkoutTracker.Controllers
         // GET: Workouts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var workout = await UserWorkouts
-                .Include(w => w.WorkoutType)
-                .FirstOrDefaultAsync(w => w.Id == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var workout = await GetWorkoutAsync(id.Value, true, true);
 
             return workout == null ? NotFound() : View(workout);
         }
@@ -58,24 +71,34 @@ namespace WorkoutTracker.Controllers
         // GET: Workouts/Create
         public IActionResult Create()
         {
-            PopulateWorkoutTypes();
+            PopulateDropdowns();
             return View();
         }
 
         // POST: Workouts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,Duration,Notes,WorkoutTypeId")] WorkoutModel workout)
+        public async Task<IActionResult> Create(WorkoutModel model)
         {
+            model.UserId = CurrentUserId;
+
             if (!ModelState.IsValid)
             {
-                PopulateWorkoutTypes(workout.WorkoutTypeId);
-                return View(workout);
+                foreach (var entry in ModelState)
+                {
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        Console.WriteLine($"FIELD: {entry.Key} | ERROR: {error.ErrorMessage}");
+                    }
+                }
+
+                PopulateDropdowns(model.WorkoutTypeId);
+                return View(model);
             }
 
-            workout.UserId = CurrentUserId;
 
-            _context.Add(workout);
+
+            _context.Workouts.Add(model);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -84,14 +107,19 @@ namespace WorkoutTracker.Controllers
         // GET: Workouts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var workout = await UserWorkouts.FirstOrDefaultAsync(w => w.Id == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var workout = await GetWorkoutAsync(id.Value, true, true);
 
             if (workout == null)
             {
                 return NotFound();
             }
 
-            PopulateWorkoutTypes(workout.WorkoutTypeId);
+            PopulateDropdowns(workout.WorkoutTypeId);
             return View(workout);
         }
 
@@ -100,14 +128,14 @@ namespace WorkoutTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Date,Duration,Notes,WorkoutTypeId")] WorkoutModel model)
+        public async Task<IActionResult> Edit(int id, WorkoutModel model)
         {
             if (id != model.Id)
             {
                 return NotFound();
             }
 
-            var workout = await UserWorkouts.FirstOrDefaultAsync(w => w.Id == id);
+            var workout = await GetWorkoutAsync(id, includeExercises: true);
 
             if (workout == null)
             {
@@ -116,7 +144,7 @@ namespace WorkoutTracker.Controllers
 
             if (!ModelState.IsValid)
             {
-                PopulateWorkoutTypes(model.WorkoutTypeId);
+                PopulateDropdowns(model.WorkoutTypeId);
                 return View(model);
             }
 
@@ -124,6 +152,44 @@ namespace WorkoutTracker.Controllers
             workout.Duration = model.Duration;
             workout.Notes = model.Notes;
             workout.WorkoutTypeId = model.WorkoutTypeId;
+
+            // Remove exercises that were deleted in the form
+            var existingExercises = workout.WorkoutExercises.ToList();
+
+            foreach (var existing in existingExercises)
+            {
+                if (!model.WorkoutExercises.Any(we => we.Id == existing.Id))
+                {
+                    _context.WorkoutExercises.Remove(existing);
+                }
+            }
+
+            foreach (var incoming in model.WorkoutExercises)
+            {
+                var existing = workout.WorkoutExercises.FirstOrDefault(we => we.Id == incoming.Id);
+
+                if (existing != null)
+                {
+                    existing.ExerciseId = incoming.ExerciseId;
+                    existing.Weight = incoming.Weight;
+                    existing.Sets = incoming.Sets;
+                    existing.Reps = incoming.Reps;
+                    existing.Distance = incoming.Distance;
+                    existing.Duration = incoming.Duration;
+                }
+                else
+                {
+                    workout.WorkoutExercises.Add(new WorkoutExerciseModel
+                    {
+                        ExerciseId = incoming.ExerciseId,
+                        Weight = incoming.Weight,
+                        Sets = incoming.Sets,
+                        Reps = incoming.Reps,
+                        Distance = incoming.Distance,
+                        Duration = incoming.Duration
+                    });
+                }
+            }
 
             await _context.SaveChangesAsync();
 
@@ -133,9 +199,12 @@ namespace WorkoutTracker.Controllers
         // GET: Workouts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            var workout = await UserWorkouts
-            .Include(w => w.WorkoutType)
-            .FirstOrDefaultAsync(w => w.Id == id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var workout = await GetWorkoutAsync(id.Value, true, true);
 
             return workout == null ? NotFound() : View(workout);
         }
@@ -158,9 +227,28 @@ namespace WorkoutTracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private void PopulateWorkoutTypes(int? selectedId = null)
+        private async Task<WorkoutModel?> GetWorkoutAsync(
+            int id, bool includeExercises = false, bool includeType = false)
+        {
+            IQueryable<WorkoutModel> query = UserWorkouts;
+
+            if (includeExercises)
+            {
+                query = query.Include(w => w.WorkoutExercises).ThenInclude(we => we.Exercise);
+            }
+
+            if (includeType)
+            {
+                query = query.Include(w => w.WorkoutType);
+            }
+
+            return await query.FirstOrDefaultAsync(w => w.Id == id);
+        }
+
+        private void PopulateDropdowns(int? selectedId = null)
         {
             ViewData["WorkoutTypeId"] = new SelectList(_context.WorkoutTypes, "Id", "Name", selectedId);
+            ViewData["Exercises"] = new SelectList(_context.Exercises, "Id", "Name", selectedId);
         }
     }
 }
