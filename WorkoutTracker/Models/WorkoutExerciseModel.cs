@@ -32,7 +32,7 @@ public class WorkoutExerciseModel
     [Display(Name = "Distans (km)")]
     public double? Distance { get; set; }
 
-    [Range(0, 1440, ErrorMessage = "Tiden måste vara 0 eller högre.")]
-    [Display(Name = "Tid (minuter)")]
-    public int? Duration { get; set; } // Duration in minutes
+    [StringLength(100, ErrorMessage = "Namnet på övningen får inte vara längre än 100 tecken.")]
+    [Display(Name = "Detaljer")]
+    public string? ExerciseDetails { get; set; }
 }
