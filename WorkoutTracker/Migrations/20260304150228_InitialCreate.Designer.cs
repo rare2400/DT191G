@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkoutTracker.Data;
 
 #nullable disable
 
-namespace WorkoutTracker.Data.Migrations
+namespace WorkoutTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260304150228_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
@@ -407,6 +410,66 @@ namespace WorkoutTracker.Data.Migrations
                             Id = 16,
                             CategoryId = 10,
                             Name = "Simning"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CategoryId = 8,
+                            Name = "Romanian deadlift"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CategoryId = 8,
+                            Name = "Cable kickbacks"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CategoryId = 8,
+                            Name = "Hyperextension"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CategoryId = 4,
+                            Name = "Cable row"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CategoryId = 4,
+                            Name = "Cable face pull"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CategoryId = 3,
+                            Name = "Dumbbell lateral raises"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CategoryId = 3,
+                            Name = "Cable lateral raises"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CategoryId = 2,
+                            Name = "Hantelpress"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CategoryId = 1,
+                            Name = "Promenad (Löpband)"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CategoryId = 1,
+                            Name = "Promenad"
                         });
                 });
 
@@ -419,8 +482,9 @@ namespace WorkoutTracker.Data.Migrations
                     b.Property<double?>("Distance")
                         .HasColumnType("REAL");
 
-                    b.Property<int?>("Duration")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ExerciseDetails")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ExerciseId")
                         .HasColumnType("INTEGER");
