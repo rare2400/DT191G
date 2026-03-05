@@ -6,9 +6,13 @@
 
 <div class="container">
 
-    <h1>Mina träningspass</h1>
+    <h1 class="text-center mt-4">Mina träningspass</h1>
 
-    <form asp-action="Index" method="get" class="d-flex">
+    <div class="d-flex justify-content-center">
+        <a asp-action="Create" class="btn btn-primary">Lägg till nytt pass</a>
+    </div>
+
+    <form asp-action="Index" method="get" class="d-flex mt-3">
         <select name="workoutTypeId" asp-items="ViewBag.WorkoutTypeId" class="form-select me-2">
             <option value="">Alla träningstyper</option>
         </select>
@@ -17,10 +21,6 @@
             Filtrera
         </button>
     </form>
-
-    <div>
-        <a asp-action="Create" class="btn btn-primary mt-3">Lägg till nytt pass</a>
-    </div>
 
     <div class="row mt-4">
         @if (Model == null || !Model.Any())
@@ -46,7 +46,8 @@
                         <div class="d-flex justify-content-end">
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary px-3 mx-1">Visa</a>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark px-3 mx-1">Ändra</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3 mx-1">Ta bort</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3 mx-1">Ta
+                                bort</a>
                         </div>
 
                     </section>
