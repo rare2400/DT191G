@@ -13,7 +13,7 @@
                 <h2>Är du säker på att du vill ta bort detta pass?</h2>
             </div>
             <div class="card-body p-4">
-                <h3 class="card-title">@Html.DisplayFor(model => model.WorkoutType.Name)</h3>
+                <h3 class="card-title">@Html.DisplayFor(model => model.WorkoutType!.Name)</h3>
                 <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Date):</span> @Html.DisplayFor(model =>
                     model.Date)</p>
                 <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Duration):</span> @Html.DisplayFor(model =>
