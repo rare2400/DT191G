@@ -13,6 +13,7 @@ namespace WorkoutTracker.Controllers
     public class ExerciseController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private const int PageSize = 10;
 
         public ExerciseController(ApplicationDbContext context)
         {
@@ -20,10 +21,36 @@ namespace WorkoutTracker.Controllers
         }
 
         // GET: Exercise
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? categoryId, int page = 1)
         {
-            var applicationDbContext = _context.Exercises.Include(e => e.Category);
-            return View(await applicationDbContext.ToListAsync());
+            IQueryable<ExerciseModel> query = _context.Exercises.Include(e => e.Category);
+
+            // Filter by category if a categoryId is provided
+            if (categoryId.HasValue)
+            {
+                query = query.Where(e => e.CategoryId == categoryId);
+            }
+
+            query = query.OrderBy(e => e.Name);
+
+             // Pagination
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
+
+            // Keep the selected category in the dropdown
+            ViewData["Categories"] = new SelectList(_context.Categories, "Id", "Name", categoryId);
+
+            // Pass pagination info to the view
+            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            var exercises = await query
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
+
+            return View(exercises);
         }
 
         // GET: Exercise/Details/5
