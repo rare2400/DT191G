@@ -1,9 +1,14 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkoutTracker.Data;
 using WorkoutTracker.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var swedishCulture = new CultureInfo("sv-SE");
+CultureInfo.DefaultThreadCurrentCulture = swedishCulture;
+CultureInfo.DefaultThreadCurrentUICulture = swedishCulture;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
