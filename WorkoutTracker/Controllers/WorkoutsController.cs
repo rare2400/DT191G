@@ -18,6 +18,8 @@ namespace WorkoutTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        private const int PageSize = 10;
+
         public WorkoutsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> UserManager)
@@ -36,10 +38,31 @@ namespace WorkoutTracker.Controllers
                 .Where(w => w.UserId == CurrentUserId);
 
         // GET: Workouts
-        public async Task<IActionResult> Index(int? workoutTypeId)
+        public async Task<IActionResult> Index(int? workoutTypeId, int? month, string? sort = "desc", int page = 1)
         {
             PopulateDropdowns(workoutTypeId);
 
+            // Get months from the user's workouts for the month filter dropdown
+            var availableMonths = await UserWorkouts
+                .Select(w => w.Date.Month)
+                .Distinct()
+                .OrderByDescending(m => m)
+                .ToListAsync();
+
+            // Create a SelectList for the month dropdown with month names
+            ViewBag.Months = new SelectList(availableMonths.Select(m => new
+            {
+                Value = m,
+                Text = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+            }),
+                "Value", "Text", month);
+
+            ViewBag.SelectedMonth = month;
+            ViewBag.Sort = sort;
+            ViewBag.CurrentPage = page;
+            ViewBag.SelectedWorkoutTypeId = workoutTypeId;
+
+            // Start with the current user's workouts and apply filters
             IQueryable<WorkoutModel> workoutsQuery = UserWorkouts;
 
             if (workoutTypeId.HasValue)
@@ -47,9 +70,25 @@ namespace WorkoutTracker.Controllers
                 workoutsQuery = workoutsQuery.Where(w => w.WorkoutTypeId == workoutTypeId);
             }
 
+            if (month.HasValue)
+            {
+                workoutsQuery = workoutsQuery.Where(w => w.Date.Month == month);
+            }
+
+            // Sorting based on sort order (ascending or descending)
+            workoutsQuery = sort == "asc" ? workoutsQuery.OrderBy(w => w.Date) : workoutsQuery.OrderByDescending(w => w.Date);
+
+            // Calculate total items and pages for pagination
+            int totalItems = await workoutsQuery.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
+
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+
+            // Include workout type in index view and apply pagination
             var workouts = await workoutsQuery
             .Include(w => w.WorkoutType)
-            .OrderByDescending(w => w.Date)
+            .Skip((page - 1) * PageSize)
             .ToListAsync();
 
             return View(workouts);
@@ -72,6 +111,7 @@ namespace WorkoutTracker.Controllers
         public IActionResult Create()
         {
             PopulateDropdowns();
+            PopulateExerciseJson();
             return View();
         }
 
@@ -97,7 +137,6 @@ namespace WorkoutTracker.Controllers
             }
 
 
-
             _context.Workouts.Add(model);
             await _context.SaveChangesAsync();
 
@@ -120,6 +159,7 @@ namespace WorkoutTracker.Controllers
             }
 
             PopulateDropdowns(workout.WorkoutTypeId);
+            PopulateExerciseJson();
             return View(workout);
         }
 
@@ -135,6 +175,7 @@ namespace WorkoutTracker.Controllers
                 return NotFound();
             }
 
+            // Load existing workout with exercises for the current user
             var workout = await GetWorkoutAsync(id, includeExercises: true);
 
             if (workout == null)
@@ -148,6 +189,7 @@ namespace WorkoutTracker.Controllers
                 return View(model);
             }
 
+            // Update workout properties
             workout.Date = model.Date;
             workout.Duration = model.Duration;
             workout.Notes = model.Notes;
@@ -164,6 +206,7 @@ namespace WorkoutTracker.Controllers
                 }
             }
 
+            // Update existing exercises and add new ones from the form
             foreach (var incoming in model.WorkoutExercises)
             {
                 var existing = workout.WorkoutExercises.FirstOrDefault(we => we.Id == incoming.Id);
@@ -175,7 +218,7 @@ namespace WorkoutTracker.Controllers
                     existing.Sets = incoming.Sets;
                     existing.Reps = incoming.Reps;
                     existing.Distance = incoming.Distance;
-                    existing.Duration = incoming.Duration;
+                    existing.ExerciseDetails = incoming.ExerciseDetails;
                 }
                 else
                 {
@@ -186,14 +229,15 @@ namespace WorkoutTracker.Controllers
                         Sets = incoming.Sets,
                         Reps = incoming.Reps,
                         Distance = incoming.Distance,
-                        Duration = incoming.Duration
+                        ExerciseDetails = incoming.ExerciseDetails
                     });
                 }
             }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            // After saving, redirect to the details page to show the updated workout
+            return RedirectToAction(nameof(Details), new { id = workout.Id });
         }
 
         // GET: Workouts/Delete/5
@@ -234,21 +278,39 @@ namespace WorkoutTracker.Controllers
 
             if (includeExercises)
             {
+                // Include exercises and their details for the workout
                 query = query.Include(w => w.WorkoutExercises).ThenInclude(we => we.Exercise);
             }
 
             if (includeType)
             {
+                // Include the workout type for the workout
                 query = query.Include(w => w.WorkoutType);
             }
 
+            // Return the current user's workout with the specified ID
             return await query.FirstOrDefaultAsync(w => w.Id == id);
         }
 
+        // Populate dropdowns for workout types and exercises
         private void PopulateDropdowns(int? selectedId = null)
         {
             ViewData["WorkoutTypeId"] = new SelectList(_context.WorkoutTypes, "Id", "Name", selectedId);
             ViewData["Exercises"] = new SelectList(_context.Exercises, "Id", "Name", selectedId);
+        }
+
+        // Populate exercises as JSON to filter exercises by category in the edit form using JavaScript
+        private void PopulateExerciseJson()
+        {
+            var exercises = _context.Exercises
+                .Select(e => new { e.Id, e.Name, e.CategoryId })
+                .ToList();
+
+            // Send exercises as JSON for cascading dropdown in the edit form
+            ViewBag.ExercisesJson = System.Text.Json.JsonSerializer.Serialize(exercises);
+
+            // Load exercise categories for the dropdown in the edit form
+            ViewBag.Categories = new SelectList(_context.Categories.OrderBy(c => c.Name), "Id", "Name");
         }
     }
 }
