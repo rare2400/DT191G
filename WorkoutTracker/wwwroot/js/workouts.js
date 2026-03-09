@@ -1,16 +1,19 @@
+const allExercises = JSON.parse(document.getElementById('exercises-data')?.textContent || '[]');
+
 window.onload = function () {
-    const workoutType = document.getElementById("WorkoutTypeId");
-    const removeBtnContainer = document.getElementById("exercise-container");
+    const workoutType = document.getElementById('WorkoutTypeId');
+    const removeBtnContainer = document.getElementById('exercise-container');
 
     // Listen for changes in the workouttype-select and toggle fields
     if (workoutType) {
-        workoutType.addEventListener("change", toggleExerciseFields);
+        workoutType.addEventListener('change', toggleExerciseFields);
         toggleExerciseFields();
     }
 
     // Eventlistener for the remove buttons, using event delegation on the container
     if (removeBtnContainer) {
         removeBtnContainer.addEventListener('click', removeClick);
+        removeBtnContainer.addEventListener('change', handleCategoryChange);
         };
 
     // Set initial exercise count and control the remove buttons
@@ -18,7 +21,28 @@ window.onload = function () {
     updateRemoveBtns();
 };
 
+// Function to handle changes in the category select
+function handleCategoryChange(e) {
+    if (!e.target.classList.contains('exercise-category')) return;
 
+    // Get the selected category id and the exercise select in the same row
+    const categoryId = e.target.value;
+    const row = e.target.closest('.exercise-row');
+    const exerciseSelect = row.querySelector('.exercise-select');
+
+    exerciseSelect.innerHTML = '<option value="">Välj övning</option>';
+
+    // Filter exercise by category, if any, otherwise show all exercises
+    const filtered = categoryId ? allExercises.filter(ex => ex.CategoryId == categoryId) : allExercises;
+        
+    // Create and append options to the exercise select
+    filtered.forEach(ex => {
+        const option = document.createElement('option');
+        option.value = ex.Id;
+        option.textContent = ex.Name;
+        exerciseSelect.appendChild(option);
+    })
+}
 
 // Code for forms, to add exercises to the workout, and to add sets to the exercise
 let exerciseCount = 0;
@@ -38,22 +62,28 @@ function addExercise() {
     idInput.value = '0'; // Default value for new exercises
     row.appendChild(idInput);
 
+    // Category select
+    const categoryWrapper = document.createElement('div');
+    categoryWrapper.classList.add('form-group', 'mt-4');
+    const categorySelect = document.createElement('select');
+    categorySelect.classList.add('form-control', 'exercise-category');
+    const firstCatSelect = document.querySelector('.exercise-category');
+    if (firstCatSelect) {
+        categorySelect.innerHTML = firstCatSelect.innerHTML;
+        categorySelect.value = '';
+    }
+
+    categoryWrapper.appendChild(categorySelect);
+
     /**
-     * Wrapper for the select for exercisename
+     * Exercise select
      */
     const exerciseWrapper = document.createElement('div');
     exerciseWrapper.classList.add('form-group', 'mt-4');
-
-    // The select-element with name, class and options from the first select
     const exerciseSelect = document.createElement('select');
     exerciseSelect.name = `WorkoutExercises[${exerciseCount}].ExerciseId`;
-    exerciseSelect.classList.add('form-control');
-
-    // Get the options from the first select and add them to the new select
-    const firstSelect = document.querySelector('#exercise-container select');
-    if (firstSelect) {
-        exerciseSelect.innerHTML = firstSelect.innerHTML;
-    }
+    exerciseSelect.classList.add('form-control', 'exercise-select');
+    exerciseSelect.innerHTML = '<option value="">Välj övning</option>';
 
     // Append the select to the wrapper
     exerciseWrapper.appendChild(exerciseSelect);
@@ -69,6 +99,7 @@ function addExercise() {
     setsDiv.classList.add('form-group', 'mt-4');
     const setsInput = document.createElement('input');
     setsInput.name = `WorkoutExercises[${exerciseCount}].Sets`;
+    setsInput.required = true;
     setsInput.type = 'number';
     setsInput.placeholder = 'Antal set';
     setsInput.classList.add('form-control');
@@ -87,7 +118,6 @@ function addExercise() {
     weightDiv.classList.add('form-group', 'mt-4');
     const weightInput = document.createElement('input');
     weightInput.name = `WorkoutExercises[${exerciseCount}].Weight`;
-    weightInput.type = 'number';
     weightInput.placeholder = 'Vikt (kg)';
     weightInput.classList.add('form-control');
 
@@ -110,23 +140,22 @@ function addExercise() {
     distanceDiv.classList.add('form-group', 'mt-4');
     const distanceInput = document.createElement('input');
     distanceInput.name = `WorkoutExercises[${exerciseCount}].Distance`;
-    distanceInput.type = 'number';
     distanceInput.placeholder = 'Distans (km)';
     distanceInput.classList.add('form-control');
 
-    // Duration
-    const durationDiv = document.createElement('div');
-    durationDiv.classList.add('form-group', 'mt-4');
-    const durationInput = document.createElement('input');
-    durationInput.name = `WorkoutExercises[${exerciseCount}].Duration`;
-    durationInput.placeholder = 'ex. 30min eller 6x30sek';
-    durationInput.classList.add('form-control');
+    // Details
+    const detailsDiv = document.createElement('div');
+    detailsDiv.classList.add('form-group', 'mt-4');
+    const detailsInput = document.createElement('input');
+    detailsInput.name = `WorkoutExercises[${exerciseCount}].Details`;
+    detailsInput.placeholder = 'ex. 30min eller 6x30sek';
+    detailsInput.classList.add('form-control');
 
     // Include the cardio fields in their wrapper
     distanceDiv.appendChild(distanceInput);
-    durationDiv.appendChild(durationInput);
+    detailsDiv.appendChild(detailsInput);
     cardioFields.appendChild(distanceDiv);
-    cardioFields.appendChild(durationDiv);
+    cardioFields.appendChild(detailsDiv);
 
     // Remove button
     const removeWrapper = document.createElement('div');
@@ -140,6 +169,7 @@ function addExercise() {
     removeWrapper.appendChild(removeBtn);
 
     // Add all elements to the row
+    row.appendChild(categoryWrapper);
     row.appendChild(exerciseWrapper);
     row.appendChild(strengthFields);
     row.appendChild(cardioFields);
@@ -158,23 +188,26 @@ function addExercise() {
 
 // Show and hide fields based on the selected workout type
 function toggleExerciseFields() {
-    const workoutType = document.getElementById("WorkoutTypeId");
+    // Get the selected workout type
+    const workoutType = document.getElementById('WorkoutTypeId');
     const selectedOption = workoutType.value;
 
-    const strengthFields = document.querySelectorAll(".strength-fields");
-    const cardioFields = document.querySelectorAll(".cardio-fields");
+    // Get strength and cardio fields
+    const strengthFields = document.querySelectorAll('.strength-fields');
+    const cardioFields = document.querySelectorAll('.cardio-fields');
 
     if (!selectedOption) return;
 
-    if (selectedOption === "1") {
-        strengthFields.forEach(field => field.style.display = "block");
-        cardioFields.forEach(field => field.style.display = "none");
-    } else if (selectedOption === "2" || selectedOption === "3") {
-        strengthFields.forEach(field => field.style.display = "none");
-        cardioFields.forEach(field => field.style.display = "block");
+    // Toggle visibility based on the selected workout type
+    if (selectedOption === '1') {
+        strengthFields.forEach(field => field.style.display = 'block');
+        cardioFields.forEach(field => field.style.display = 'none');
+    } else if (selectedOption === '2' || selectedOption === '3' || selectedOption === '5') {
+        strengthFields.forEach(field => field.style.display = 'none');
+        cardioFields.forEach(field => field.style.display = 'block');
     } else {
-        strengthFields.forEach(field => field.style.display = "block");
-        cardioFields.forEach(field => field.style.display = "block");
+        strengthFields.forEach(field => field.style.display = 'block');
+        cardioFields.forEach(field => field.style.display = 'block');
     }
 }
 
@@ -191,6 +224,7 @@ function reindexExercises() {
             if (input.name === '__Invariant') return;
             if (input.name === 'WorkoutExercises.Index') return;
             if (/^WorkoutExercises\[\d+\]\.Id$/.test(input.name)) return;
+            if (input.classList.contains('exercise-category')) return;
 
             // Update index
             input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
@@ -231,11 +265,11 @@ function updateRemoveBtns() {
 
     if (rows.length <= 1) {
         removeBtns.forEach(btn => {
-            btn.style.display = "none";
+            btn.style.display = 'none';
         });
     } else {
         removeBtns.forEach(btn => {
-            btn.style.display = "inline-block";
+            btn.style.display = 'inline-block';
         });
     }
 }
