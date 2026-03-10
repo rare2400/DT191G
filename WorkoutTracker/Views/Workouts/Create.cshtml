@@ -10,7 +10,8 @@
         <section class="card shadow-sm mb-4">
             <div class="card-header py-3 text-center">
                 <h1 class="text-center">Skapa träningspass</h1>
-                <p class="m-0">Saknas en övning? <a asp-controller="Exercise" asp-action="Create">Lägg till övning här</a></p>
+                <p class="m-0">Saknas en övning? <a asp-controller="Exercise" asp-action="Create">Lägg till övning
+                        här</a></p>
             </div>
             <div class="card-body">
                 <form asp-action="Create">
@@ -41,7 +42,12 @@
                         <h2 class="mt-4">Övningar</h2>
                         <div class="exercise-row">
                             <div class="form-group">
-                                <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control"
+                                <select class="form-control exercise-category" asp-items="ViewBag.Categories">
+                                    <option value="">Välj kategori</option>
+                                </select>
+                            </div>
+                            <div class="form-group mt-4">
+                                <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
                                     asp-items="ViewBag.Exercises">
                                     <option value="">Välj övning</option>
                                 </select>
@@ -49,10 +55,12 @@
                             <!-- Strength fields -->
                             <div class="strength-fields">
                                 <div class="form-group mt-4">
-                                    <input name="WorkoutExercises[0].Sets" class="form-control" placeholder="Sets" />
+                                    <input type="number" name="WorkoutExercises[0].Sets" class="form-control"
+                                        placeholder="Sets" />
                                 </div>
                                 <div class="form-group mt-4">
-                                    <input name="WorkoutExercises[0].Reps" class="form-control" placeholder="Reps" />
+                                    <input type="number" name="WorkoutExercises[0].Reps" class="form-control"
+                                        placeholder="Reps" />
                                 </div>
                                 <div class="form-group mt-4">
                                     <input name="WorkoutExercises[0].Weight" class="form-control"
@@ -86,10 +94,14 @@
         </section>
     </div>
 </div>
+
+@* Övningar som JSON — läses av workouts.js för cascading dropdown *@
+<script id="exercises-data" type="application/json">@Html.Raw(ViewBag.ExercisesJson)</script>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script src="~/js/workouts.js"></script>
+<script src="~/js/workouts.js"></script>
 }
