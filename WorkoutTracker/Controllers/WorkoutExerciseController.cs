@@ -25,16 +25,24 @@ namespace WorkoutTracker.Controllers
         private string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
         // GET: WorkoutExercise
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? exerciseId)
         {
+            await PopulateExerciseAndCategoryData(exerciseId);
 
-            var workoutExercises = _context.WorkoutExercises
-                .Include(w => w.Exercise)
-                .Include(w => w.Workout)
-                .Where(w => w.Workout.UserId == CurrentUserId)
+            if (!exerciseId.HasValue)
+            {
+                return View(new List<WorkoutExerciseModel>());
+            }
+
+            // Get all workout exercises for the current user for the selected exercise 
+            var progress = await _context.WorkoutExercises
+                .Include(we => we.Workout)
+                .Include(we => we.Exercise)
+                .Where(we => we.ExerciseId == exerciseId && we.Workout!.UserId == CurrentUserId)
+                .OrderByDescending(we => we.Workout!.Date)
                 .ToListAsync();
 
-            return View(await workoutExercises);
+            return View(progress);
         }
 
         // GET: WorkoutExercise/Details/5
@@ -147,7 +155,7 @@ namespace WorkoutTracker.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var workoutExercise = await GetUserWorkoutExercise(id);
-            
+
             if (workoutExercise == null)
             {
                 return NotFound();
@@ -165,7 +173,7 @@ namespace WorkoutTracker.Controllers
                 .Include(w => w.Exercise)
                 .Include(w => w.Workout)
                 .FirstOrDefaultAsync(w =>
-                    w.Id == id && w.Workout.UserId == CurrentUserId);
+                    w.Id == id && w.Workout!.UserId == CurrentUserId);
         }
 
         private async Task<bool> UserWorkout(int workoutId)
@@ -173,6 +181,19 @@ namespace WorkoutTracker.Controllers
             return await _context.Workouts
                 .AnyAsync(w =>
                     w.Id == workoutId && w.UserId == CurrentUserId);
+        }
+
+        // Populate exercises and categories for dropdowns and filtering
+        private async Task PopulateExerciseAndCategoryData(int? selectedExerciseId = null)
+        {
+            var exercises = await _context.Exercises.OrderBy(e => e.Name).ToListAsync();
+            var categories = await _context.Categories.OrderBy(c => c.Name).ToListAsync();
+
+            ViewData["Exercises"] = new SelectList(exercises, "Id", "Name", selectedExerciseId);
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            ViewBag.ExercisesJson = System.Text.Json.JsonSerializer.Serialize(
+                exercises.Select(e => new { e.Id, e.Name, e.CategoryId })
+            );
         }
 
         private async Task PopulateDropdowns(WorkoutExerciseModel? model = null)
