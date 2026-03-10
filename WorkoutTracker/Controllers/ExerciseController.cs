@@ -33,12 +33,12 @@ namespace WorkoutTracker.Controllers
 
             query = query.OrderBy(e => e.Name);
 
-             // Pagination
+            // Pagination
             int totalItems = await query.CountAsync();
             int totalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
 
             // Keep the selected category in the dropdown
-            ViewData["Categories"] = new SelectList(_context.Categories, "Id", "Name", categoryId);
+            PopulateCategoryDropdown(categoryId);
 
             // Pass pagination info to the view
             ViewBag.SelectedCategoryId = categoryId;
@@ -75,7 +75,7 @@ namespace WorkoutTracker.Controllers
         // GET: Exercise/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            PopulateCategoryDropdown();
             return View();
         }
 
@@ -92,7 +92,7 @@ namespace WorkoutTracker.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", exerciseModel.CategoryId);
+            PopulateCategoryDropdown(exerciseModel.CategoryId);
             return View(exerciseModel);
         }
 
@@ -109,7 +109,7 @@ namespace WorkoutTracker.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", exerciseModel.CategoryId);
+            PopulateCategoryDropdown(exerciseModel.CategoryId);
             return View(exerciseModel);
         }
 
@@ -145,7 +145,7 @@ namespace WorkoutTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", exerciseModel.CategoryId);
+            PopulateCategoryDropdown(exerciseModel.CategoryId);
             return View(exerciseModel);
         }
 
@@ -186,6 +186,12 @@ namespace WorkoutTracker.Controllers
         private bool ExerciseModelExists(int id)
         {
             return _context.Exercises.Any(e => e.Id == id);
+        }
+
+        // Helper method to populate category dropdown
+        private void PopulateCategoryDropdown(int? selectedId = null)
+        {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", selectedId);
         }
     }
 }
