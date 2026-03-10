@@ -1,71 +1,143 @@
 @model IEnumerable<WorkoutTracker.Models.WorkoutExerciseModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Historik";
+    bool isCardio = Model.Any() && Model.First().Weight == null && Model.First().Reps == null;
 }
 
-<h1 class="text-center">Dina övningar</h1>
+<script id="exercises-data" type="application/json">@Html.Raw(ViewBag.ExercisesJson)</script>
 
-<p>
-    <a asp-action="Create">Lägg till utveckling</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Workout)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Exercise)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Weight)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sets)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reps)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Distance)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ExerciseDetails)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Workout!.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Exercise!.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Weight)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sets)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reps)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Distance)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExerciseDetails)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h1>Historik</h1>
+    <div class="d-flex gap-2">
+        <a asp-controller="Exercise" asp-action="Index" class="btn btn-outline-dark shadow-sm">Övningar</a>
+        <a asp-controller="Workouts" asp-action="Index" class="btn btn-outline-dark shadow-sm">Träningspass</a>
+    </div>
+</div>
+
+<form asp-controller="WorkoutExercise" asp-action="Index" method="get" class="row g-2 mt-2 mb-3 align-items-end">
+    <div class="col">
+        <select id="category-filter" asp-items="ViewBag.Categories" class="form-select">
+            <option value="">Alla kategorier</option>
+        </select>
+    </div>
+    <div class="col">
+        <select id="exercise-filter" name="exerciseId" asp-items="ViewBag.Exercises as SelectList" class="form-select">
+            <option value="">Välj övning</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Visa</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted text-center my-3">Välj en övning för att se din historik och utveckling</p>
 }
-    </tbody>
-</table>
+else
+{
+    <h2 class="mt-4">@Model.First().Exercise?.Name</h2>
+    <p class="text-muted">@Model.Count() tillfällen loggade</p>
+
+    @if (isCardio)
+    {
+        <div class="d-md-none">
+            @foreach (var item in Model)
+            {
+                <div class="card mb-2 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="fw-semibold">@(item.Workout?.Date.ToString("dd MMMM yyyy"))</div>
+                        <small class="text-muted">
+                            @if (item.Distance.HasValue) { <span>@item.Distance km</span> }
+                            @if (!string.IsNullOrEmpty(item.ExerciseDetails)) { <span> · @item.ExerciseDetails</span> }
+                        </small>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <table class="table table-hover d-none d-md-table">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Distans (km)</th>
+                    <th>Detaljer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(item.Workout?.Date.ToString("dd MMMM yyyy"))</td>
+                        <td>@item.Distance</td>
+                        <td>@item.ExerciseDetails</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="d-md-none">
+            @foreach (var item in Model)
+            {
+                <div class="card mb-2 shadow-sm">
+                    <div class="card-body py-2">
+                        <div class="fw-semibold">@(item.Workout?.Date.ToString("dd MMMM yyyy"))</div>
+                        <small class="text-muted">@item.Sets set · @item.Reps reps · @item.Weight kg</small>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <table class="table table-hover d-none d-md-table">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Vikt (kg)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(item.Workout?.Date.ToString("dd MMMM yyyy"))</td>
+                        <td>@item.Sets</td>
+                        <td>@item.Reps</td>
+                        <td>@item.Weight</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@section Scripts {
+<script>
+    const allExercises = JSON.parse(document.getElementById('exercises-data')?.textContent || '[]');
+
+    document.getElementById('category-filter').addEventListener('change', function () {
+        const categoryId = parseInt(this.value);
+        const exerciseSelect = document.getElementById('exercise-filter');
+        const currentValue = exerciseSelect.value;
+
+        // Clear and fill exercise options again
+        exerciseSelect.innerHTML = '<option value="">Välj övning</option>';
+
+        const filtered = categoryId
+            ? allExercises.filter(e => e.CategoryId === categoryId)
+            : allExercises;
+
+        filtered.forEach(e => {
+            const option = document.createElement('option');
+            option.value = e.Id;
+            option.textContent = e.Name;
+            if (e.Id === parseInt(currentValue)) option.selected = true;
+            exerciseSelect.appendChild(option);
+        });
+    });
+</script>
+}
