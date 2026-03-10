@@ -9,11 +9,18 @@
         <section class="card shadow-sm mb-4">
             <div class="card-header py-3 text-center">
                 <h1 class="text-center">Ändra träningspass</h1>
+                <p class="m-0">Saknas en övning? <a asp-controller="Exercise" asp-action="Create">Lägg till övning
+                        här</a></p>
             </div>
             <div class="card-body pt-0">
                 <form asp-action="Edit">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
+                    <div class="form-group mt-3">
+                        <label asp-for="WorkoutTypeId" class="control-label"></label>
+                        <select asp-for="WorkoutTypeId" class="form-control" asp-items="ViewBag.WorkoutTypeId"></select>
+                        <span asp-validation-for="WorkoutTypeId" class="text-danger"></span>
+                    </div>
                     <div class="form-group mt-4">
                         <label asp-for="Date" class="control-label"></label>
                         <input asp-for="Date" class="form-control" />
@@ -29,19 +36,19 @@
                         <input asp-for="Notes" class="form-control" />
                         <span asp-validation-for="Notes" class="text-danger"></span>
                     </div>
-                    <div class="form-group mt-4">
-                        <label asp-for="WorkoutTypeId" class="control-label"></label>
-                        <select asp-for="WorkoutTypeId" class="form-control" asp-items="ViewBag.WorkoutTypeId"></select>
-                        <span asp-validation-for="WorkoutTypeId" class="text-danger"></span>
-                    </div>
                     <div id="exercise-container">
                         <h2 class="mt-4">Övningar</h2>
                         @for (int i = 0; i < Model.WorkoutExercises.Count; i++)
                         {
                             <div class="exercise-row">
-                                <input type="hidden" asp-for="WorkoutExercises[i].Id" />
                                 <div class="form-group">
-                                    <select asp-for="WorkoutExercises[i].ExerciseId" class="form-control"
+                                    <select class="form-control exercise-category" asp-items="ViewBag.Categories">
+                                        <option value="">Välj kategori</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" asp-for="WorkoutExercises[i].Id" />
+                                <div class="form-group mt-4">
+                                    <select asp-for="WorkoutExercises[i].ExerciseId" class="form-control exercise-select"
                                         asp-items="ViewBag.Exercises">
                                     </select>
                                 </div>
@@ -86,6 +93,8 @@
     </div>
 </div>
 
+@* Övningar som JSON — läses av workouts.js för cascading dropdown *@
+<script id="exercises-data" type="application/json">@Html.Raw(ViewBag.ExercisesJson)</script>
 
 @section Scripts {
     @{
