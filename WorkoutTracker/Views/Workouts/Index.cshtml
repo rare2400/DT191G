@@ -2,25 +2,62 @@
 
 @{
     ViewData["Title"] = "Mina träningspass";
+
+    // Extract pagination and sorting info from ViewBag
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    string sort = ViewBag.Sort ?? "desc";
+    int? workoutTypeId = ViewBag.SelectedWorkoutTypeId;
+    int? selectedMonth = ViewBag.SelectedMonth;
+
+    // Build URL with current filters and new page/sort parameters
+    string PageUrl(int page) =>
+    $"?page={page}&sort={sort}" +
+    (workoutTypeId.HasValue ? $"&workoutTypeId={workoutTypeId}" : "") +
+    (selectedMonth.HasValue ? $"&month={selectedMonth}" : "");
+
+    string SortUrl(string newSort) =>
+    $"?page=1&sort={newSort}" +
+    (workoutTypeId.HasValue ? $"&workoutTypeId={workoutTypeId}" : "") +
+    (selectedMonth.HasValue ? $"&month={selectedMonth}" : "");
 }
 
 <div class="container">
-
-    <h1 class="text-center mt-4">Mina träningspass</h1>
-
-    <div class="d-flex justify-content-center">
-        <a asp-action="Create" class="btn btn-primary">Lägg till nytt pass</a>
+    
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h1 class="text-center">Mina träningspass</h1>
+        <a asp-action="Create" class="btn btn-outline-dark">Lägg till nytt pass</a>
+        <a asp-controller="WorkoutExercise" asp-action="Index" class="btn btn-outline-dark">Se din utveckling</a>
     </div>
 
-    <form asp-action="Index" method="get" class="d-flex mt-3">
-        <select name="workoutTypeId" asp-items="ViewBag.WorkoutTypeId" class="form-select me-2">
-            <option value="">Alla träningstyper</option>
-        </select>
-
-        <button type="submit" class="btn btn-outline-dark">
-            Filtrera
-        </button>
+    <form asp-action="Index" method="get" class="row g-2 mt-1 mb-3 align-items-end">
+        <div class="col">
+            <select name="workoutTypeId" asp-items="ViewBag.WorkoutTypeId" class="form-select">
+                <option value="">Alla träningstyper</option>
+            </select>
+        </div>
+        <div class="col">
+            <select name="month" asp-items="ViewBag.Months" class="form-select">
+                <option value="">Alla månader</option>
+            </select>
+        </div>
+        <input type="hidden" name="sort" value="@sort" />
+        <input type="hidden" name="page" value="1" />
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Filtrera</button>
+        </div>
     </form>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <small class="text-muted">Visar @Model.Count() av @totalItems pass</small>
+            <a href="@SortUrl(sort == "desc" ? "asc" : "desc")" class="btn btn-sm btn-outline-secondary">
+                @(sort == "desc" ? "Äldst först ↑" : "Nyast först ↓")
+            </a>
+        </div>
+    }
 
     <div class="row mt-4">
         @if (Model == null || !Model.Any())
@@ -36,7 +73,7 @@
                 <div class="col-md-4 mb-4">
                     <section class="card shadow-sm h-100 p-4">
                         <h2>@item.WorkoutType?.Name</h2>
-                        <p>@Html.DisplayNameFor(model => model.Date): @item.Date.ToString("dd-MM-yyyy")</p>
+                        <p>@Html.DisplayNameFor(model => model.Date): @item.Date.ToString("d MMMM yyyy")</p>
                         <p>@Html.DisplayNameFor(model => model.Duration): @item.Duration min</p>
                         @if (item.Notes != null)
                         {
@@ -55,4 +92,50 @@
             }
         }
     </div>
+
+    @if (totalPages > 1)
+    {
+        <nav class="d-flex justify-content-center mt-2 mb-4">
+            <ul class="pagination">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@PageUrl(currentPage - 1)">«</a>
+                </li>
+
+                @{
+                    int start = Math.Max(1, currentPage - 2);
+                    int end = Math.Min(totalPages, start + 4);
+                    start = Math.Max(1, end - 4);
+                }
+
+                @if (start > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="@PageUrl(1)">1</a></li>
+                    @if (start > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                }
+
+                @for (int i = start; i <= end; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="@PageUrl(i)">@i</a>
+                    </li>
+                }
+
+                @if (end < totalPages)
+                {
+                    @if (end < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="@PageUrl(totalPages)">@totalPages</a></li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="@PageUrl(currentPage + 1)">»</a>
+                </li>
+            </ul>
+        </nav>
+    }
 </div>
