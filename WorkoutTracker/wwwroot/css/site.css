@@ -1,21 +1,79 @@
+/* colors */
+:root {
+  --bg: #f9fafb;
+  --primary-color: #1f2937;
+  --text: #111827;
+  --accent: #ffaa60;
+  --accent-hover: #b07039;
+}
+
+html[data-theme="dark"] {
+  --bg: #111827;
+  --text: #F3F4F6;
+  --primary-color: #0B1220;
+  --accent: #FFAA60;
+}
+
 html {
   font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
   position: relative;
   min-height: 100%;
 }
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.btn-primary {
+  color: #000;
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  color: var(--bg);
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-outline-dark {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-dark:hover {
+  color: var(--bg);
+  background-color: var(--primary-color);
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--accent);
+  border: none;
+}
+
+.nav-link {
+  color: var(--primary-color);
+}
+
+.link-hover:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.hover-effect:hover {
+  border: none;
+}
+
+.hover-effect:active {
+  border: 3px solid var(--primary-color);
+}
+
 
 body {
   margin-bottom: 60px;
@@ -28,4 +86,10 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
 }
