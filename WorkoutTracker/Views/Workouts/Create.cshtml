@@ -5,94 +5,92 @@
 }
 
 
-<div class="row">
-    <div class="col-md-4 mt-3">
-        <section class="card shadow-sm mb-4">
-            <div class="card-header py-3 text-center">
-                <h1 class="text-center">Skapa träningspass</h1>
-                <p class="m-0">Saknas en övning? <a asp-controller="Exercise" asp-action="Create">Lägg till övning
-                        här</a></p>
-            </div>
-            <div class="card-body">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="WorkoutTypeId" class="control-label"></label>
-                        <select asp-for="WorkoutTypeId" class="form-control" id="WorkoutTypeId"
-                            asp-items="ViewBag.WorkoutTypeId">
-                            <option value="">Välj träningstyp</option>
-                        </select>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label asp-for="Date" class="control-label"></label>
-                        <input asp-for="Date" class="form-control" />
-                        <span asp-validation-for="Date" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label asp-for="Duration" class="control-label"></label>
-                        <input asp-for="Duration" class="form-control" />
-                        <span asp-validation-for="Duration" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mt-4">
-                        <label asp-for="Notes" class="control-label"></label>
-                        <input asp-for="Notes" class="form-control" />
-                        <span asp-validation-for="Notes" class="text-danger"></span>
-                    </div>
-                    <div id="exercise-container">
-                        <h2 class="mt-4">Övningar</h2>
-                        <div class="exercise-row">
-                            <div class="form-group">
-                                <select class="form-control exercise-category" asp-items="ViewBag.Categories">
-                                    <option value="">Välj kategori</option>
-                                </select>
+<div class="form-container">
+    <section class="card shadow-sm mb-4">
+        <div class="card-header py-3 text-center">
+            <h1 class="text-center">Skapa träningspass</h1>
+            <p class="m-0">Saknas en övning? <a asp-controller="Exercise" asp-action="Create">Lägg till övning
+                    här</a></p>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="WorkoutTypeId" class="control-label"></label>
+                    <select asp-for="WorkoutTypeId" class="form-control" id="WorkoutTypeId"
+                        asp-items="ViewBag.WorkoutTypeId">
+                        <option value="">Välj träningstyp</option>
+                    </select>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Date" class="control-label"></label>
+                    <input asp-for="Date" class="form-control" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Duration" class="control-label"></label>
+                    <input asp-for="Duration" class="form-control" />
+                    <span asp-validation-for="Duration" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Notes" class="control-label"></label>
+                    <input asp-for="Notes" class="form-control" />
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+                <div id="exercise-container">
+                    <h2 class="mt-4">Övningar</h2>
+                    <div class="exercise-row">
+                        <div class="form-group">
+                            <select class="form-control exercise-category" asp-items="ViewBag.Categories">
+                                <option value="">Välj kategori</option>
+                            </select>
+                        </div>
+                        <div class="form-group mt-4">
+                            <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
+                                asp-items="ViewBag.Exercises">
+                                <option value="">Välj övning</option>
+                            </select>
+                        </div>
+                        <!-- Strength fields -->
+                        <div class="strength-fields">
+                            <div class="form-group mt-4">
+                                <input type="number" name="WorkoutExercises[0].Sets" class="form-control"
+                                    placeholder="Sets" />
                             </div>
                             <div class="form-group mt-4">
-                                <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
-                                    asp-items="ViewBag.Exercises">
-                                    <option value="">Välj övning</option>
-                                </select>
+                                <input type="number" name="WorkoutExercises[0].Reps" class="form-control"
+                                    placeholder="Reps" />
                             </div>
-                            <!-- Strength fields -->
-                            <div class="strength-fields">
-                                <div class="form-group mt-4">
-                                    <input type="number" name="WorkoutExercises[0].Sets" class="form-control"
-                                        placeholder="Sets" />
-                                </div>
-                                <div class="form-group mt-4">
-                                    <input type="number" name="WorkoutExercises[0].Reps" class="form-control"
-                                        placeholder="Reps" />
-                                </div>
-                                <div class="form-group mt-4">
-                                    <input name="WorkoutExercises[0].Weight" class="form-control"
-                                        placeholder="Vikt (kg)" />
-                                </div>
-                            </div>
-                            <!-- Cardio fields -->
-                            <div class="form-group mt-4 cardio-fields">
-                                <input name="WorkoutExercises[0].Distance" class="form-control"
-                                    placeholder="Distans (km)" />
-                            </div>
-                            <div class="form-group mt-4 cardio-fields">
-                                <input name="WorkoutExercises[0].ExerciseDetails" class="form-control"
-                                    placeholder="Detaljer (ex. 6x30s.)" />
-                            </div>
-                            <div class="form-group mt-3 d-flex justify-content-end">
-                                <button type="button" class="btn btn-danger btn-sm remove-ex-btn">Ta bort</button>
+                            <div class="form-group mt-4">
+                                <input name="WorkoutExercises[0].Weight" class="form-control" placeholder="Vikt (kg)" />
                             </div>
                         </div>
-
+                        <!-- Cardio fields -->
+                        <div class="form-group mt-4 cardio-fields">
+                            <input name="WorkoutExercises[0].Distance" class="form-control"
+                                placeholder="Distans (km)" />
+                        </div>
+                        <div class="form-group mt-4 cardio-fields">
+                            <input name="WorkoutExercises[0].ExerciseDetails" class="form-control"
+                                placeholder="Detaljer (ex. 6x30s.)" />
+                        </div>
+                        <div class="form-group mt-3 d-flex justify-content-end">
+                            <button type="button" class="btn btn-danger btn-sm remove-ex-btn">Ta bort</button>
+                        </div>
                     </div>
 
-                    <button type="button" onclick="addExercise()" class="btn btn-light mt-3">Lägg till övning <i class="bi bi-plus-lg"></i></button>
+                </div>
 
-                    <div class="form-group d-flex justify-content-between mt-3">
-                        <a asp-action="Index" class="btn btn-outline-dark">Avbryt</a>
-                        <input type="submit" value="Skapa" class="btn btn-primary" />
-                    </div>
-                </form>
-            </div>
-        </section>
-    </div>
+                <button type="button" onclick="addExercise()" class="btn btn-light mt-3">Lägg till övning <i
+                        class="bi bi-plus-lg"></i></button>
+
+                <div class="form-group d-flex justify-content-between mt-3">
+                    <a asp-action="Index" class="btn btn-outline-dark">Avbryt</a>
+                    <input type="submit" value="Skapa" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </section>
 </div>
 
 @* Övningar som JSON — läses av workouts.js för cascading dropdown *@

@@ -24,11 +24,10 @@
 }
 
 <div class="container">
-    
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <h1 class="text-center">Mina träningspass</h1>
-        <a asp-action="Create" class="btn btn-sm btn-outline-dark mx-1"><i class="bi bi-plus-lg"></i> Lägg till nytt pass</a>
-        <a asp-controller="WorkoutExercise" asp-action="Index" class="btn btn-sm btn-outline-dark mx-1">Se din utveckling</a>
+    <h1 class="text-center">Mina träningspass</h1>
+    <div class="d-flex justify-content-center align-items-center mb-2">
+        <a asp-action="Create" class="btn btn-sm btn-outline-dark mx-2"><i class="bi bi-plus-lg"></i> Lägg till nytt pass</a>
+        <a asp-controller="WorkoutExercise" asp-action="Index" class="btn btn-sm btn-outline-dark mx-2">Se din utveckling</a>
     </div>
 
     <form asp-action="Index" method="get" class="row g-2 mt-1 mb-3 align-items-end">
@@ -70,15 +69,17 @@
         {
             @foreach (var item in Model)
             {
-                <div class="col-md-4 mb-4 workout-card-col">
+                <div class="col-12 col-md-6 mb-4 workout-card-col">
                     <section class="card shadow-sm h-100 p-4">
                         <h2>@item.WorkoutType?.Name</h2>
+                        <div class="flex-grow-1">
                         <p class="my-1"><i class="bi bi-calendar3"></i> @item.Date.ToString("d MMMM yyyy")</p>
                         <p class="my-1"><i class="bi bi-clock"></i> @item.Duration min</p>
                         @if (item.Notes != null)
                         {
                             <p class="my-1"><i class="bi bi-chat-right-text"></i> @Html.DisplayNameFor(model => model.Notes): @item.Notes</p>
                         }
+                        </div>
 
                         <div class="d-flex justify-content-end mt-2">
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary px-3 mx-1"><i class="bi bi-box-arrow-up-right"></i> Visa</a>
