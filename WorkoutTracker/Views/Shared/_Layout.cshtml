@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WorkoutTracker</title>
     <script type="importmap"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WorkoutTracker.styles.css" asp-append-version="true" />
 </head>
 
 <body>
-    @* <a class="sr-only sr-only-focusable skip-link text-light" href="#main-content">Hoppa till innehåll</a> *@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark box-shadow mb-3">
             <div class="container-fluid">
@@ -25,21 +25,47 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link active text-light" asp-area="" asp-controller="Workouts"
-                                    asp-action="Index">Mina träningspass</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Träningspass
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Index">
+                                            <i class="bi bi-journal-text me-2"></i>Mina träningspass
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Workouts" asp-action="Create">
+                                            <i class="bi bi-plus-circle me-2"></i>Lägg till träningspass
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link active text-light" asp-area="" asp-controller="Workouts"
-                                    asp-action="Index">Lägg till träningspass</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active text-light" asp-area="" asp-controller="Exercise"
-                                    asp-action="Index">Övningar</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active text-light" asp-area="" asp-controller="Exercise"
-                                    asp-action="Create">Lägg till övning</a>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-light" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Övningar
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="WorkoutExercise" asp-action="Index">
+                                            <i class="bi bi-graph-up-arrow me-2"></i>Min historik
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Exercise" asp-action="Index">
+                                            <i class="bi bi-lightning-charge me-2"></i>Alla övningar
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Exercise" asp-action="Create">
+                                            <i class="bi bi-plus-circle me-2"></i>Lägg till övning
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                     </ul>
@@ -55,8 +81,16 @@
     </div>
 
     <footer class="footer text-light">
-        <div class="container">
-            &copy; 2026 - WorkoutTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container p-4">
+            <h3>Kontakt</h3>
+            <div class="mb-3">
+                <a href="mailto:info@workoutrracker.se" class="link text-light m-0">info@workoutrracker.se</a>
+                <br>
+                <a href="tel:+46700323332" class="link text-light m-0">0700323332</a>
+            </div>
+            <div class="text-center">
+                &copy; 2026 - WorkoutTracker
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
