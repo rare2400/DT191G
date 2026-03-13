@@ -89,6 +89,7 @@ namespace WorkoutTracker.Controllers
             var workouts = await workoutsQuery
             .Include(w => w.WorkoutType)
             .Skip((page - 1) * PageSize)
+            .Take(PageSize)
             .ToListAsync();
 
             return View(workouts);
