@@ -20,7 +20,7 @@
 
 /* --- Bas --- */
 html {
-  font-size: 14px;
+  font-size: 0.8rem;
   position: relative;
   height: 100%;
 }
@@ -59,6 +59,21 @@ h1 {
   border-color: var(--border);
 }
 
+/* paginering */
+.pagination {
+  --bs-pagination-bg: var(--bg-soft);
+  --bs-pagination-color: var(--text);
+  --bs-pagination-border-color: var(--border);
+  --bs-pagination-hover-bg: var(--accent-hover);
+  --bs-pagination-hover-color: var(--text);
+  --bs-pagination-hover-border-color: var(--border);
+  --bs-pagination-active-bg: var(--accent);
+  --bs-pagination-active-color: var(--text);
+  --bs-pagination-active-border-color: var(--accent);
+  --bs-pagination-disabled-bg: var(--bg-soft);
+  --bs-pagination-disabled-color: var(--text-soft);
+  --bs-pagination-disabled-border-color: var(--border);
+}
 
 .nav-pills {
   --bs-nav-pills-link-active-bg: var(--accent);
