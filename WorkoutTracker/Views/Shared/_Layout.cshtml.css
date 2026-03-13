@@ -1,11 +1,4 @@
-﻿/* colors */
-:root {
-  --bg: #f9fafb;
-  --primary-color: #1f2937;
-  --text: #111827;
-  --accent: #ffaa60;
-  --accent-hover: #b07039;
-}
+﻿/* Styling header, nav and footer */
 
 .navbar {
   background-color: var(--primary-color);
@@ -18,11 +11,15 @@ a.navbar-brand {
 }
 
 a {
-  color: #0077cc;
+  color: var(--text);
 }
 
 .navbar-toggler:hover {
   background-color: #465c7d;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
@@ -41,10 +38,8 @@ button.accept-policy {
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
+  margin-top: auto;
   width: 100%;
   background-color: var(--primary-color);
   white-space: nowrap;
-  line-height: 60px;
 }
