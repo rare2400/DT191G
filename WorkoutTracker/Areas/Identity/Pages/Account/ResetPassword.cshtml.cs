@@ -59,8 +59,8 @@ namespace WorkoutTracker.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Bekräfta lösenord")]
+            [Compare("Password", ErrorMessage = "Lösenordet och det bekräftande lösenordet matchar inte.")]
             public string ConfirmPassword { get; set; }
 
             /// <summary>

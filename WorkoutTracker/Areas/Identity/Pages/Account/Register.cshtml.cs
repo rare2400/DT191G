@@ -84,7 +84,7 @@ namespace WorkoutTracker.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "Email")]
+            [Display(Name = "E-post")]
             public string Email { get; set; }
 
             /// <summary>

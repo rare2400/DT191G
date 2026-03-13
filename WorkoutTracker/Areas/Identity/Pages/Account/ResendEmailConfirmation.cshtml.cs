@@ -48,6 +48,7 @@ namespace WorkoutTracker.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
+            [Display(Name = "E-post")]
             public string Email { get; set; }
         }
 
@@ -65,7 +66,7 @@ namespace WorkoutTracker.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+                ModelState.AddModelError(string.Empty, "Verifieringsmail har skickats. Vänligen kontrollera din inkorg.");
                 return Page();
             }
 
@@ -82,7 +83,7 @@ namespace WorkoutTracker.Areas.Identity.Pages.Account
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+            ModelState.AddModelError(string.Empty, "Verifieringsmail har skickats. Vänligen kontrollera din inkorg.");
             return Page();
         }
     }
