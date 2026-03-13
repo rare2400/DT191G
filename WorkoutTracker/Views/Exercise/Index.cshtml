@@ -2,33 +2,103 @@
 
 @{
     ViewData["Title"] = "Övningar";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    int? selectedCategoryId = ViewBag.SelectedCategoryId;
+
+    string PageUrl(int page) =>
+    $"?page={page}" +
+    (selectedCategoryId.HasValue ? $"&categoryId={selectedCategoryId}" : "");
 }
-<div>
-    <h1 class="text-center">Övningar</h1>
-    <a asp-action="Create" class="btn btn-primary shadow-sm">Lägg till övning</a>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h1>Övningar</h1>
+    <a asp-action="Create" class="btn btn-primary shadow-sm">Lägg till övning <i class="bi bi-plus"></i></a>
 </div>
 
-<form asp-action="Index" method="get" class="d-flex mt-2">
+<form asp-action="Index" method="get" class="d-flex mt-2 mb-3">
     <select name="categoryId" asp-items="ViewBag.Categories" class="form-select me-2">
-        <option value="">Välj kategori</option>
+        <option value="">Alla kategorier</option>
     </select>
-
-    <button type="submit" class="btn btn-outline-dark">
-        Filtrera
-    </button>
+    <input type="hidden" name="page" value="1" />
+    <button type="submit" class="btn btn-outline-dark">Filtrera</button>
 </form>
-@foreach (var item in Model)
+
+@if (!Model.Any())
 {
-    <div class="card my-2">
-        <div class="card-body py-2 d-flex justify-content-between align-items-center">
-            <div>
+    <p class="text-muted">Inga övningar hittades.</p>
+}
+else
+{
+    <small class="text-muted d-block mb-2">Visar @Model.Count() av @totalItems övningar</small>
+
+    @foreach (var item in Model)
+    {
+
+        <div class="card my-2">
+    <div class="card-body py-2 d-flex justify-content-between align-items-center">
+
+        <div>
+            <a asp-action="Details" asp-route-id="@item.Id" class="link-hover text-decoration-none text-dark">
                 <div class="fw-semibold">@item.Name</div>
                 <small class="text-muted">@item.Category?.Name</small>
-            </div>
-            <div class="d-flex gap-2">
-            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark">Ändra</a>
-            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Ta bort</a>
-            </div>
+            </a>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark"><i
+                    class="bi bi-pencil"></i> Ändra</a>
+            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger"><i
+                            class="bi bi-trash"></i> Ta bort</a>
         </div>
     </div>
+</div>
+
+    }
+
+    @if (totalPages > 1)
+    {
+        <nav class="d-flex justify-content-center mt-3 mb-4">
+    <ul class="pagination">
+        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@PageUrl(currentPage - 1)">«</a>
+        </li>
+
+        @{
+                    int start = Math.Max(1, currentPage - 2);
+                    int end = Math.Min(totalPages, start + 4);
+                    start = Math.Max(1, end - 4);
+                }
+
+                @if (start > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="@PageUrl(1)">1</a></li>
+                    @if (start > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                }
+
+                @for (int i = start; i <= end; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="@PageUrl(i)">@i</a>
+                    </li>
+                }
+
+                @if (end < totalPages)
+                {
+                    @if (end < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="@PageUrl(totalPages)">@totalPages</a></li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="@PageUrl(currentPage + 1)">»</a>
+                </li>
+            </ul>
+        </nav>
+    }
 }
