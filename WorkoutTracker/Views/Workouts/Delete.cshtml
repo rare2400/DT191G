@@ -1,66 +1,136 @@
 @model WorkoutTracker.Models.WorkoutModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Ta bort pass";
+    bool isCardio = Model.WorkoutExercises.Any() &&
+    Model.WorkoutExercises.First().Weight == null &&
+    Model.WorkoutExercises.First().Reps == null;
 }
 
-
-<div class="row mt-5">
-    <h1 class="text-danger text-center">Ta bort pass</h1>
+<div class="row mt-3">
+    <h1 class="text-danger text-center fs-2">Ta bort pass</h1>
     <div class="col-md-4">
         <section class="card shadow-sm mb-4">
             <div class="card-header py-3 text-center">
-                <h2>Är du säker på att du vill ta bort detta pass?</h2>
+                <h2 class="fs-3">Är du säker på att du vill ta bort detta pass?</h2>
             </div>
             <div class="card-body p-4">
                 <h3 class="card-title">@Html.DisplayFor(model => model.WorkoutType!.Name)</h3>
-                <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Date):</span> @Html.DisplayFor(model =>
-                    model.Date)</p>
-                <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Duration):</span> @Html.DisplayFor(model =>
-                    model.Duration)min</p>
-                <p><span class="fw-bold">@Html.DisplayNameFor(model => model.Notes):</span> @Html.DisplayFor(model =>
-                    model.Notes)</p>
+                <p>
+                    <span class="fw-bold">@Html.DisplayNameFor(model => model.Date):
+                        @Model.Date.ToString("dd MMMM yyyy")
+                </p>
+                <p>
+                    <span class="fw-bold">@Html.DisplayNameFor(model => model.Duration):</span>
+                    @Html.DisplayFor(model => model.Duration) min
+                </p>
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <p>
+                        <span class="fw-bold">@Html.DisplayNameFor(model => model.Notes):</span>
+                        @Html.DisplayFor(model => model.Notes)
+                    </p>
+                }
 
-                <h2 class="fs-4">Övningar</h2>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Övning</th>
-                            <th>Set</th>
-                            <th>Reps</th>
-                            <th>Vikt (kg)</th>
-                        </tr>
-                    </thead>
-                    @if (Model.WorkoutExercises == null || !Model.WorkoutExercises.Any())
-                    {
-                        <p>
-                            Det finns inga övningar registrerade för detta pass.
-                        </p>
-                    }
-                    else
-                    {
+                <h2 class="fs-4 mt-3">Övningar</h2>
+
+                @if (Model.WorkoutExercises == null || !Model.WorkoutExercises.Any())
+                {
+                    <p class="text-muted">Det finns inga övningar registrerade för detta pass.</p>
+                }
+                else if (isCardio)
+                {
+                    @* Kortlayout för mobil *@
+                    <div class="d-md-none">
                         @foreach (var exercise in Model.WorkoutExercises)
                         {
-                            <tbody>
+                            <div class="card mb-2 shadow-sm p-2">
+                                <div class="fw-semibold">@exercise.Exercise?.Name</div>
+                                <small class="text-muted">
+                                    @if (exercise.Distance.HasValue)
+                                    {
+                                        <span>@exercise.Distance km</span>
+                                    }
+                                    @if (!string.IsNullOrEmpty(exercise.ExerciseDetails))
+                                    {
+                                        <span> ·
+                                            @exercise.ExerciseDetails</span>
+                                    }
+                                </small>
+                            </div>
+                        }
+                    </div>
+
+                    @* Tabellayout för större skärmar *@
+                    <table class="table table-hover d-none d-md-table">
+                        <thead>
+                            <tr>
+                                <th>Övning</th>
+                                <th>Distans (km)</th>
+                                <th>Detaljer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var exercise in Model.WorkoutExercises)
+                            {
+                                <tr>
+                                    <td>@exercise.Exercise?.Name</td>
+                                    <td>@exercise.Distance</td>
+                                    <td>@exercise.ExerciseDetails</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    @* Kortlayout för mobil *@
+                    <div class="d-md-none">
+                        @foreach (var exercise in Model.WorkoutExercises)
+                        {
+                            <div class="card mb-2 shadow-sm">
+                                <div class="card-body py-2">
+                                    <div class="fw-semibold">@exercise.Exercise?.Name</div>
+                                    <small class="text-muted">
+                                        @exercise.Sets set · @exercise.Reps reps · @exercise.Weight kg
+                                    </small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @* Tabellayout för större skärmar *@
+                    <table class="table table-hover d-none d-md-table">
+                        <thead>
+                            <tr>
+                                <th>Övning</th>
+                                <th>Set</th>
+                                <th>Reps</th>
+                                <th>Vikt (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var exercise in Model.WorkoutExercises)
+                            {
                                 <tr>
                                     <td>@exercise.Exercise?.Name</td>
                                     <td>@exercise.Sets</td>
                                     <td>@exercise.Reps</td>
-                                    <td>@exercise.Weight kg</td>
+                                    <td>@exercise.Weight</td>
                                 </tr>
-                            </tbody>
+                            }
+                        </tbody>
+                    </table>
+                }
 
-                        }
-                    }
-                </table>
-
-                <div class="d-flex justify-content-end mt-4">
-                    <form asp-action="Delete">
+                <form asp-action="Delete">
+                    <div class="d-flex justify-content-between mt-4">
                         <input type="hidden" asp-for="Id" />
+                        <a asp-action="Index" class="btn btn-outline-dark px-3 me-2">Avbryt</a>
                         <input type="submit" value="Ta bort" class="btn btn-danger px-3" />
-                        <a asp-action="Index" class="btn btn-outline-dark px-3">Avbryt</a>
-                    </form>
-                </div>
+                    </div>
+                </form>
+            </div>
         </section>
     </div>
 </div>

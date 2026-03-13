@@ -27,17 +27,17 @@
     
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h1 class="text-center">Mina träningspass</h1>
-        <a asp-action="Create" class="btn btn-outline-dark">Lägg till nytt pass</a>
-        <a asp-controller="WorkoutExercise" asp-action="Index" class="btn btn-outline-dark">Se din utveckling</a>
+        <a asp-action="Create" class="btn btn-sm btn-outline-dark mx-1"><i class="bi bi-plus-lg"></i> Lägg till nytt pass</a>
+        <a asp-controller="WorkoutExercise" asp-action="Index" class="btn btn-sm btn-outline-dark mx-1">Se din utveckling</a>
     </div>
 
     <form asp-action="Index" method="get" class="row g-2 mt-1 mb-3 align-items-end">
-        <div class="col">
+        <div class="form-group col">
             <select name="workoutTypeId" asp-items="ViewBag.WorkoutTypeId" class="form-select">
                 <option value="">Alla träningstyper</option>
             </select>
         </div>
-        <div class="col">
+        <div class="form-group col">
             <select name="month" asp-items="ViewBag.Months" class="form-select">
                 <option value="">Alla månader</option>
             </select>
@@ -53,7 +53,7 @@
     {
         <div class="d-flex justify-content-between align-items-center mb-3">
             <small class="text-muted">Visar @Model.Count() av @totalItems pass</small>
-            <a href="@SortUrl(sort == "desc" ? "asc" : "desc")" class="btn btn-sm btn-outline-secondary">
+            <a href="@SortUrl(sort == "desc" ? "asc" : "desc")" class="btn btn-sm btn-outline-dark">
                 @(sort == "desc" ? "Äldst först ↑" : "Nyast först ↓")
             </a>
         </div>
@@ -70,21 +70,22 @@
         {
             @foreach (var item in Model)
             {
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4 workout-card-col">
                     <section class="card shadow-sm h-100 p-4">
                         <h2>@item.WorkoutType?.Name</h2>
-                        <p>@Html.DisplayNameFor(model => model.Date): @item.Date.ToString("d MMMM yyyy")</p>
-                        <p>@Html.DisplayNameFor(model => model.Duration): @item.Duration min</p>
+                        <p class="my-1"><i class="bi bi-calendar3"></i> @item.Date.ToString("d MMMM yyyy")</p>
+                        <p class="my-1"><i class="bi bi-clock"></i> @item.Duration min</p>
                         @if (item.Notes != null)
                         {
-                            <p>@Html.DisplayNameFor(model => model.Notes): @item.Notes</p>
+                            <p class="my-1"><i class="bi bi-chat-right-text"></i> @Html.DisplayNameFor(model => model.Notes): @item.Notes</p>
                         }
 
-                        <div class="d-flex justify-content-end">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary px-3 mx-1">Visa</a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark px-3 mx-1">Ändra</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3 mx-1">Ta
-                                bort</a>
+                        <div class="d-flex justify-content-end mt-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary px-3 mx-1"><i class="bi bi-box-arrow-up-right"></i> Visa</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark px-3 mx-1"><i
+                            class="bi bi-pencil"></i> Ändra</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3 mx-1"><i
+                            class="bi bi-trash"></i> Ta bort</a>
                         </div>
 
                     </section>
