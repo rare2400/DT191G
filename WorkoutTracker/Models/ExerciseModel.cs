@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WorkoutTracker.Models;
 
@@ -16,6 +17,11 @@ public class ExerciseModel
     [Display(Name = "Kategori")]
     public int CategoryId { get; set; }
     public CategoryModel ? Category { get; set; }
+
+    public string? UserId { get; set; }
+
+    [ForeignKey("UserId")]
+    public ApplicationUser ? User { get; set; }
 
     // Relations
     public List<WorkoutExerciseModel> WorkoutExercises { get; set; } = [];
