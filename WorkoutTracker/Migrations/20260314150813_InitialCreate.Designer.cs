@@ -11,7 +11,7 @@ using WorkoutTracker.Data;
 namespace WorkoutTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260304150228_InitialCreate")]
+    [Migration("20260314150813_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -240,58 +240,6 @@ namespace WorkoutTracker.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Kondition"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Bröst"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Axlar"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Rygg"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Bålstyrka"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Armar"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Ben"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "Ben Baksida/Rumpa"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Rörlighet"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Övrigt"
-                        });
                 });
 
             modelBuilder.Entity("WorkoutTracker.Models.ExerciseModel", b =>
@@ -308,169 +256,16 @@ namespace WorkoutTracker.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Exercises");
+                    b.HasIndex("UserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 1,
-                            Name = "Intervaller (löpband)"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 1,
-                            Name = "Löpning (löpband)"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 1,
-                            Name = "Intervaller (cykel)"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 1,
-                            Name = "Långdistans"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CategoryId = 2,
-                            Name = "Bänkpress"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CategoryId = 3,
-                            Name = "Axelpress"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CategoryId = 4,
-                            Name = "Lat pulldown"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CategoryId = 5,
-                            Name = "Sit-ups"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CategoryId = 6,
-                            Name = "Biceps curl"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CategoryId = 7,
-                            Name = "Benpress"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            CategoryId = 7,
-                            Name = "Benböj"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            CategoryId = 8,
-                            Name = "Hip Thrust"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            CategoryId = 9,
-                            Name = "Yoga"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            CategoryId = 9,
-                            Name = "Pilates"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            CategoryId = 9,
-                            Name = "Stretching"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            CategoryId = 10,
-                            Name = "Simning"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            CategoryId = 8,
-                            Name = "Romanian deadlift"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            CategoryId = 8,
-                            Name = "Cable kickbacks"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            CategoryId = 8,
-                            Name = "Hyperextension"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            CategoryId = 4,
-                            Name = "Cable row"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            CategoryId = 4,
-                            Name = "Cable face pull"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            CategoryId = 3,
-                            Name = "Dumbbell lateral raises"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            CategoryId = 3,
-                            Name = "Cable lateral raises"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            CategoryId = 2,
-                            Name = "Hantelpress"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            CategoryId = 1,
-                            Name = "Promenad (Löpband)"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            CategoryId = 1,
-                            Name = "Promenad"
-                        });
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Models.WorkoutExerciseModel", b =>
@@ -553,28 +348,6 @@ namespace WorkoutTracker.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkoutTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Styrketräning"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Löpning"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Cykel"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Övrigt"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -636,7 +409,13 @@ namespace WorkoutTracker.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WorkoutTracker.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Category");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WorkoutTracker.Models.WorkoutExerciseModel", b =>

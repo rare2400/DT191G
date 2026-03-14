@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace WorkoutTracker.Migrations
 {
     /// <inheritdoc />
@@ -193,11 +191,17 @@ namespace WorkoutTracker.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Exercises", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exercises_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Exercises_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -260,67 +264,6 @@ namespace WorkoutTracker.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Kondition" },
-                    { 2, "Bröst" },
-                    { 3, "Axlar" },
-                    { 4, "Rygg" },
-                    { 5, "Bålstyrka" },
-                    { 6, "Armar" },
-                    { 7, "Ben" },
-                    { 8, "Ben Baksida/Rumpa" },
-                    { 9, "Rörlighet" },
-                    { 10, "Övrigt" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "WorkoutTypes",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Styrketräning" },
-                    { 2, "Löpning" },
-                    { 3, "Cykel" },
-                    { 4, "Övrigt" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Exercises",
-                columns: new[] { "Id", "CategoryId", "Name" },
-                values: new object[,]
-                {
-                    { 1, 1, "Intervaller (löpband)" },
-                    { 2, 1, "Löpning (löpband)" },
-                    { 3, 1, "Intervaller (cykel)" },
-                    { 4, 1, "Långdistans" },
-                    { 5, 2, "Bänkpress" },
-                    { 6, 3, "Axelpress" },
-                    { 7, 4, "Lat pulldown" },
-                    { 8, 5, "Sit-ups" },
-                    { 9, 6, "Biceps curl" },
-                    { 10, 7, "Benpress" },
-                    { 11, 7, "Benböj" },
-                    { 12, 8, "Hip Thrust" },
-                    { 13, 9, "Yoga" },
-                    { 14, 9, "Pilates" },
-                    { 15, 9, "Stretching" },
-                    { 16, 10, "Simning" },
-                    { 17, 8, "Romanian deadlift" },
-                    { 18, 8, "Cable kickbacks" },
-                    { 19, 8, "Hyperextension" },
-                    { 20, 4, "Cable row" },
-                    { 21, 4, "Cable face pull" },
-                    { 22, 3, "Dumbbell lateral raises" },
-                    { 23, 3, "Cable lateral raises" },
-                    { 24, 2, "Hantelpress" },
-                    { 25, 1, "Promenad (Löpband)" },
-                    { 26, 1, "Promenad" }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -364,6 +307,11 @@ namespace WorkoutTracker.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Exercises_UserId",
+                table: "Exercises",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_ExerciseId",
                 table: "WorkoutExercises",
                 column: "ExerciseId");
@@ -404,13 +352,13 @@ namespace WorkoutTracker.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Exercises");
 
             migrationBuilder.DropTable(
                 name: "Workouts");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Categories");
