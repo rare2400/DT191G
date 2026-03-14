@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WorkoutTracker.Data;
 using WorkoutTracker.Models;
 
@@ -13,12 +15,19 @@ namespace WorkoutTracker.Controllers
     public class ExerciseController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         private const int PageSize = 10;
 
-        public ExerciseController(ApplicationDbContext context)
+        public ExerciseController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+
+        private string CurrentUserId => _userManager.GetUserId(User)!;
+
+        private IQueryable<ExerciseModel> UserExercises =>
+            _context.Exercises.Where(e => e.UserId == CurrentUserId || e.UserId == null);
 
         // GET: Exercise
         public async Task<IActionResult> Index(int? categoryId, int page = 1)
@@ -88,7 +97,8 @@ namespace WorkoutTracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(exerciseModel);
+                exerciseModel.UserId = CurrentUserId;
+                _context.Exercises.Add(exerciseModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -105,10 +115,11 @@ namespace WorkoutTracker.Controllers
             }
 
             var exerciseModel = await _context.Exercises.FindAsync(id);
-            if (exerciseModel == null)
+            if (exerciseModel == null || exerciseModel.UserId != CurrentUserId)
             {
-                return NotFound();
+                return Forbid();
             }
+
             PopulateCategoryDropdown(exerciseModel.CategoryId);
             return View(exerciseModel);
         }
@@ -125,10 +136,18 @@ namespace WorkoutTracker.Controllers
                 return NotFound();
             }
 
+            var existing = await _context.Exercises.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+
+            if (existing == null || (existing.UserId != CurrentUserId))
+            {
+                return Forbid();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    exerciseModel.UserId = existing.UserId; // Preserve original UserId
                     _context.Update(exerciseModel);
                     await _context.SaveChangesAsync();
                 }
@@ -157,7 +176,7 @@ namespace WorkoutTracker.Controllers
                 return NotFound();
             }
 
-            var exerciseModel = await _context.Exercises
+            var exerciseModel = await UserExercises
                 .Include(e => e.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (exerciseModel == null)
@@ -174,11 +193,12 @@ namespace WorkoutTracker.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var exerciseModel = await _context.Exercises.FindAsync(id);
-            if (exerciseModel != null)
+            if (exerciseModel == null || exerciseModel.UserId != CurrentUserId)
             {
-                _context.Exercises.Remove(exerciseModel);
+                return Forbid();
             }
 
+            _context.Exercises.Remove(exerciseModel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
