@@ -32,7 +32,7 @@ namespace WorkoutTracker.Controllers
         // GET: Exercise
         public async Task<IActionResult> Index(int? categoryId, int page = 1)
         {
-            IQueryable<ExerciseModel> query = _context.Exercises.Include(e => e.Category);
+            IQueryable<ExerciseModel> query = UserExercises.Include(e => e.Category);
 
             // Filter by category if a categoryId is provided
             if (categoryId.HasValue)
@@ -40,7 +40,7 @@ namespace WorkoutTracker.Controllers
                 query = query.Where(e => e.CategoryId == categoryId);
             }
 
-            query = query.OrderBy(e => e.Name);
+            query = query.OrderBy(e => e.UserId == null ? 1: 0).ThenBy(e => e.Name);
 
             // Pagination
             int totalItems = await query.CountAsync();
@@ -179,7 +179,7 @@ namespace WorkoutTracker.Controllers
             var exerciseModel = await UserExercises
                 .Include(e => e.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (exerciseModel == null)
+            if (exerciseModel == null || exerciseModel.UserId != CurrentUserId)
             {
                 return NotFound();
             }
@@ -211,7 +211,7 @@ namespace WorkoutTracker.Controllers
         // Helper method to populate category dropdown
         private void PopulateCategoryDropdown(int? selectedId = null)
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", selectedId);
+            ViewBag.Categories = new SelectList(_context.Categories.OrderBy(c => c.Name), "Id", "Name", selectedId);
         }
     }
 }
