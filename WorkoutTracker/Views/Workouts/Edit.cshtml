@@ -60,14 +60,14 @@
                                     <input asp-for="WorkoutExercises[i].Reps" class="form-control" placeholder="Reps" />
                                 </div>
                                 <div class="form-group mt-4">
-                                    <input asp-for="WorkoutExercises[i].Weight" class="form-control"
-                                        placeholder="Vikt (kg)" />
+                                    <input asp-for="WorkoutExercises[i].Weight" class="form-control" placeholder="Vikt (kg)"
+                                        type="text" inputmode="decimal" data-val="false" />
                                 </div>
                             </div>
                             <!-- Cardio fields -->
                             <div class="form-group mt-4 cardio-fields">
                                 <input asp-for="WorkoutExercises[i].Distance" class="form-control"
-                                    placeholder="Distans (km)" />
+                                    placeholder="Distans (km)" type="text" inputmode="decimal" data-val="false" />
                             </div>
                             <div class="form-group mt-4 cardio-fields">
                                 <input asp-for="WorkoutExercises[i].ExerciseDetails" class="form-control"
