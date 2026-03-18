@@ -117,7 +117,6 @@ namespace WorkoutTracker.Controllers
             }
 
             var workout = await GetWorkoutAsync(id.Value, true, true);
-            Console.WriteLine($"Övningar: {workout?.WorkoutExercises.Count}");
 
             if (workout == null)
             {
