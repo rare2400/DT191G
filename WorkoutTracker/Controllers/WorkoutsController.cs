@@ -108,6 +108,47 @@ namespace WorkoutTracker.Controllers
             return workout == null ? NotFound() : View(workout);
         }
 
+        // GET: Workouts/Copy/5
+        public async Task<IActionResult> Copy(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var workout = await GetWorkoutAsync(id.Value, true, true);
+            Console.WriteLine($"Övningar: {workout?.WorkoutExercises.Count}");
+
+            if (workout == null)
+            {
+                return NotFound();
+            }
+
+            var copy = new WorkoutModel
+            {
+                Id = 0,
+                WorkoutTypeId = workout!.WorkoutTypeId,
+                Date = DateTime.Today,
+                Duration = workout.Duration,
+                Notes = workout.Notes,
+                WorkoutExercises = workout.WorkoutExercises.Select(we => new WorkoutExerciseModel
+
+                {
+                Id = 0,
+                ExerciseId = we.ExerciseId,
+                Sets = we.Sets,
+                Reps = we.Reps,
+                Weight = we.Weight,
+                Distance = we.Distance,
+                ExerciseDetails = we.ExerciseDetails
+                }).ToList()
+            };
+
+            PopulateDropdowns(copy.WorkoutTypeId);
+            PopulateExerciseJson();
+            return View("Create", copy);
+        }
+
         // GET: Workouts/Create
         public IActionResult Create()
         {
