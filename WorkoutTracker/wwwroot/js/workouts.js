@@ -16,7 +16,8 @@ window.onload = function () {
         removeBtnContainer.addEventListener('change', handleCategoryChange);
         };
 
-    // Set initial exercise count and control the remove buttons
+    // Check existing rows, set initial exercise count and control the remove buttons
+    initExistingRows();
     exerciseCount = document.querySelectorAll('#exercise-container .exercise-row').length;
     updateRemoveBtns();
 };
@@ -41,6 +42,43 @@ function handleCategoryChange(e) {
         option.value = ex.Id;
         option.textContent = ex.Name;
         exerciseSelect.appendChild(option);
+    })
+}
+
+// Check existing exercise-rows and fill dropdowns
+function initExistingRows() {
+    // Get existing exercise-rows
+    const rows = document.querySelectorAll('#exercise-container .exercise-row');
+
+    rows.forEach(row => {
+        // Select-elements in form, return if there is no select
+        const exerciseSelect = row.querySelector('.exercise-select');
+        const categorySelect = row.querySelector('.exercise-category');
+        if(!exerciseSelect ||!categorySelect) return;
+
+        // Get exercise id and return if there is no id
+        const selectedExerciseId = exerciseSelect.value;
+        if (!selectedExerciseId) return;
+
+        // Check exercise in JSON to find catgory and return if no data is found
+        const exercise = allExercises.find(ex => ex.Id == selectedExerciseId);
+        if (!exercise) return;
+
+        // Set category-select to the exercises category
+        categorySelect.value = exercise.CategoryId;
+
+        // Filter all exercises in the same category and rebuild exercise category-dropdown
+        const filtered = allExercises.filter(ex => ex.CategoryId == exercise.CategoryId);
+        exerciseSelect.innerHTML = '<option value="">Välj övning</option>';
+        filtered.forEach(ex => {
+            const option = document.createElement('option');
+            option.value = ex.Id;
+            option.textContent = ex.Name;
+            exerciseSelect.appendChild(option);
+        });
+
+        // Reset the originally chosen value
+        exerciseSelect.value = selectedExerciseId;
     })
 }
 
