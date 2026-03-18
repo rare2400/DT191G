@@ -39,45 +39,93 @@
                 </div>
                 <div id="exercise-container">
                     <h2 class="mt-4">Övningar</h2>
-                    <div class="exercise-row">
-                        <div class="form-group">
-                            <select class="form-control exercise-category" asp-items="ViewBag.Categories">
-                                <option value="">Välj kategori</option>
-                            </select>
-                        </div>
-                        <div class="form-group mt-4">
-                            <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
-                                asp-items="ViewBag.Exercises">
-                                <option value="">Välj övning</option>
-                            </select>
-                        </div>
-                        <!-- Strength fields -->
-                        <div class="strength-fields">
-                            <div class="form-group mt-4">
-                                <input type="number" name="WorkoutExercises[0].Sets" class="form-control"
-                                    placeholder="Sets" />
+                    @if (@Model.WorkoutExercises != null && Model.WorkoutExercises.Any())
+                    {
+                        @for (int i = 0; i < Model.WorkoutExercises.Count; i++)
+                        {
+                            <div class="exercise-row">
+                                <div class="form-group">
+                                    <select class="form-control exercise-category" asp-items="ViewBag.Categories">
+                                        <option value="">Välj kategori</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" asp-for="WorkoutExercises[@i].Id" value="0" />
+                                <div class="form-group mt-4">
+                                    <select asp-for="WorkoutExercises[i].ExerciseId" class="form-control exercise-select"
+                                        asp-items="ViewBag.Exercises">
+                                    </select>
+                                </div>
+                                <!-- Strength fields -->
+                                <div class="strength-fields">
+                                    <div class="form-group mt-4">
+                                        <input asp-for="WorkoutExercises[@i].Sets" class="form-control" placeholder="Sets" value="@Model.WorkoutExercises[i].Sets" />
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <input asp-for="WorkoutExercises[@i].Reps" class="form-control" placeholder="Reps" value="@Model.WorkoutExercises[i].Reps" />
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <input asp-for="WorkoutExercises[@i].Weight" class="form-control" placeholder="Vikt (kg)"
+                                            value="@Model.WorkoutExercises[i].Weight" type="text" inputmode="decimal" data-val="false" />
+                                    </div>
+                                </div>
+                                <!-- Cardio fields -->
+                                <div class="form-group mt-4 cardio-fields">
+                                    <input asp-for="WorkoutExercises[@i].Distance" class="form-control"
+                                        placeholder="Distans (km)" value="@Model.WorkoutExercises[i].Distance" type="text" inputmode="decimal" data-val="false" />
+                                </div>
+                                <div class="form-group mt-4 cardio-fields">
+                                    <input asp-for="WorkoutExercises[@i].ExerciseDetails" class="form-control"
+                                        placeholder="Detaljer (ex. 6x30s.)" value="@Model.WorkoutExercises[i].ExerciseDetails" />
+                                </div>
+                                <div class="form-group my-3 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-danger btn-sm remove-ex-btn">Ta bort</button>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+
+                        <div class="exercise-row">
+                            <div class="form-group">
+                                <select class="form-control exercise-category" asp-items="ViewBag.Categories">
+                                    <option value="">Välj kategori</option>
+                                </select>
                             </div>
                             <div class="form-group mt-4">
-                                <input type="number" name="WorkoutExercises[0].Reps" class="form-control"
-                                    placeholder="Reps" />
+                                <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
+                                    asp-items="ViewBag.Exercises">
+                                    <option value="">Välj övning</option>
+                                </select>
                             </div>
-                            <div class="form-group mt-4">
-                                <input name="WorkoutExercises[0].Weight" class="form-control" placeholder="Vikt (kg)" />
+                            <!-- Strength fields -->
+                            <div class="strength-fields">
+                                <div class="form-group mt-4">
+                                    <input type="number" name="WorkoutExercises[0].Sets" class="form-control"
+                                        placeholder="Sets" />
+                                </div>
+                                <div class="form-group mt-4">
+                                    <input type="number" name="WorkoutExercises[0].Reps" class="form-control"
+                                        placeholder="Reps" />
+                                </div>
+                                <div class="form-group mt-4">
+                                    <input name="WorkoutExercises[0].Weight" class="form-control" placeholder="Vikt (kg)" />
+                                </div>
+                            </div>
+                            <!-- Cardio fields -->
+                            <div class="form-group mt-4 cardio-fields">
+                                <input name="WorkoutExercises[0].Distance" class="form-control"
+                                    placeholder="Distans (km)" />
+                            </div>
+                            <div class="form-group mt-4 cardio-fields">
+                                <input name="WorkoutExercises[0].ExerciseDetails" class="form-control"
+                                    placeholder="Detaljer (ex. 6x30s.)" />
+                            </div>
+                            <div class="form-group mt-3 d-flex justify-content-end">
+                                <button type="button" class="btn btn-danger btn-sm remove-ex-btn">Ta bort</button>
                             </div>
                         </div>
-                        <!-- Cardio fields -->
-                        <div class="form-group mt-4 cardio-fields">
-                            <input name="WorkoutExercises[0].Distance" class="form-control"
-                                placeholder="Distans (km)" />
-                        </div>
-                        <div class="form-group mt-4 cardio-fields">
-                            <input name="WorkoutExercises[0].ExerciseDetails" class="form-control"
-                                placeholder="Detaljer (ex. 6x30s.)" />
-                        </div>
-                        <div class="form-group mt-3 d-flex justify-content-end">
-                            <button type="button" class="btn btn-danger btn-sm remove-ex-btn">Ta bort</button>
-                        </div>
-                    </div>
+                    }
 
                 </div>
 
