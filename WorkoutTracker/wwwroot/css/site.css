@@ -78,6 +78,11 @@ h1 {
   --bs-nav-pills-link-active-color: var(--text);
 }
 
+.bg-secondary {
+  background-color: var(--primary-color) !important;
+  color: var(--bg) !important;
+}
+
 .btn-primary {
   color: var(--text);
   background-color: var(--accent);
@@ -118,7 +123,8 @@ h1 {
 
 /* Formulärfält — bas (ljust läge) */
 .form-control,
-.form-select {
+.form-select,
+.filter-chip {
   background-color: var(--bg-soft);
   color: var(--text);
   border-color: var(--border);
@@ -192,71 +198,31 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
-/* --- Statistikkort (inloggad hero) --- */
+/* inloggad hero */
 .stat-cards {
   flex: 1 1 260px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .75rem;
 }
 
-.stat-card {
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 1rem 1.25rem;
-  box-shadow: var(--shadow);
+.stat-cards .card {
   flex: 1 1 100px;
-  text-align: center;
 }
 
-.stat-card-last {
-  flex: 1 1 100%;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
+.letter-spacing-wide {
+  letter-spacing: .07em;
 }
 
-.stat-card-value {
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: .25rem;
-}
-
-.stat-card-label {
-  font-size: .8rem;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-}
-
-/* --- Pass-preview (utloggad hero-mockup) --- */
+/* utloggad hero */
 .pass-preview {
   flex: 1 1 240px;
   max-width: 340px;
-  color: var(--text-soft);
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
-  box-shadow: var(--shadow);
 }
 
-.pass-preview-label {
-  font-size: .7rem;
-  text-transform: uppercase;
-  letter-spacing: .08em;
+.soft-text {
   color: var(--text-soft);
-  margin-bottom: .5rem;
 }
 
-.pass-preview-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: .85rem;
-  padding: .4rem 0;
-  border-top: 1px solid var(--border);
-  color: var(--text-soft);
+.flex-260 {
+  flex: 1 1 260px;
 }
 
 /* --- Features --- */
@@ -271,61 +237,17 @@ h1 {
   padding-top: .1rem;
 }
 
-/* --- Mini-preview (features) --- */
-.mini-preview {
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: .9rem 1.1rem;
-  font-size: .875rem;
-  max-width: 300px;
-}
-
-.mini-preview-row {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .2rem 0;
-  color: var(--text-soft);
-}
-
-/* --- Stapeldiagram (features) --- */
-.bar-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: .4rem;
-  height: 80px;
-}
-
-.bar-chart-bar {
-  flex: 1;
-  background: var(--border);
-  border-radius: 4px 4px 0 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: .2rem;
-  font-size: .7rem;
-  color: #888;
-}
-
-.bar-chart-bar.active {
-  background: var(--accent);
-  color: var(--bg-soft);
-}
-
 /* --- Filter-chips --- */
 .filter-chip {
-  background: var(--border);
-  border-radius: 999px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
   padding: .2rem .75rem;
   font-size: .8rem;
-  color: var(--text-soft);
 }
 
 .filter-chip.active {
   background: var(--accent);
-  color: #fff;
+  color: var(--text);
 }
 
 /* --- Träningspass-kort --- */
@@ -407,6 +329,10 @@ h1 {
     --bs-nav-pills-link-active-color: var(--bg);
   }
 
+  .bg-secondary {
+  background-color: var(--text-soft) !important;
+}
+
   /* Formulärfält */
   .form-control,
   .form-select {
@@ -480,7 +406,8 @@ h1 {
   }
 
   /* Knappar */
-  .btn-primary {
+  .btn-primary,
+  .filter-chip.active {
     color: var(--primary-color);
   }
 
