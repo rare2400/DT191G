@@ -330,8 +330,16 @@ h1 {
   }
 
   .bg-secondary {
-  background-color: var(--text-soft) !important;
-}
+    background-color: var(--text-soft) !important;
+  }
+
+  .link {
+    color: var(--accent);
+  }
+
+  .link:hover {
+    color: var(--accent-hover);
+  }
 
   /* Formulärfält */
   .form-control,
