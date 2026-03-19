@@ -14,7 +14,7 @@ window.onload = function () {
     if (removeBtnContainer) {
         removeBtnContainer.addEventListener('click', removeClick);
         removeBtnContainer.addEventListener('change', handleCategoryChange);
-        };
+    };
 
     // Check existing rows, set initial exercise count and control the remove buttons
     initExistingRows();
@@ -35,7 +35,7 @@ function handleCategoryChange(e) {
 
     // Filter exercise by category, if any, otherwise show all exercises
     const filtered = categoryId ? allExercises.filter(ex => ex.CategoryId == categoryId) : allExercises;
-        
+
     // Create and append options to the exercise select
     filtered.forEach(ex => {
         const option = document.createElement('option');
@@ -54,7 +54,7 @@ function initExistingRows() {
         // Select-elements in form, return if there is no select
         const exerciseSelect = row.querySelector('.exercise-select');
         const categorySelect = row.querySelector('.exercise-category');
-        if(!exerciseSelect ||!categorySelect) return;
+        if (!exerciseSelect || !categorySelect) return;
 
         // Get exercise id and return if there is no id
         const selectedExerciseId = exerciseSelect.value;
@@ -238,14 +238,17 @@ function toggleExerciseFields() {
 
     // Toggle visibility based on the selected workout type
     if (selectedOption === '1') {
-        strengthFields.forEach(field => field.style.display = 'block');
-        cardioFields.forEach(field => field.style.display = 'none');
-    } else if (selectedOption === '2' || selectedOption === '3' || selectedOption === '5') {
+        // if 1 - cardio, show cardiofields
         strengthFields.forEach(field => field.style.display = 'none');
         cardioFields.forEach(field => field.style.display = 'block');
-    } else {
+    } else if (selectedOption === '7') {
+        // if 7 - other, show all fields
         strengthFields.forEach(field => field.style.display = 'block');
         cardioFields.forEach(field => field.style.display = 'block');
+    } else {
+        // else - type of strength/functional training, show strengthfields
+        strengthFields.forEach(field => field.style.display = 'block');
+        cardioFields.forEach(field => field.style.display = 'none');
     }
 }
 
