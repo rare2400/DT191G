@@ -153,7 +153,8 @@ namespace WorkoutTracker.Controllers
         {
             PopulateDropdowns();
             PopulateExerciseJson();
-            return View();
+            return View(new WorkoutModel { Date = DateTime.Today,
+            WorkoutExercises = [] });
         }
 
         // POST: Workouts/Create
