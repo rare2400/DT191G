@@ -41,8 +41,10 @@ public static class SeedData
         }
 
         context.WorkoutTypes.AddRange(
-            new WorkoutTypeModel { Name = "Styrketräning" },
             new WorkoutTypeModel { Name = "Konditionsträning" },
+            new WorkoutTypeModel { Name = "Styrketräning" },
+            new WorkoutTypeModel { Name = "Styrketräning - Överkropp" },
+            new WorkoutTypeModel { Name = "Styrketräning - Ben" },
             new WorkoutTypeModel { Name = "Funktionell träning" },
             new WorkoutTypeModel { Name = "Rörlighet" },
             new WorkoutTypeModel { Name = "Övrigt" }
