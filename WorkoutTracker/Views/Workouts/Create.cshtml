@@ -39,7 +39,7 @@
                 </div>
                 <div id="exercise-container">
                     <h2 class="mt-4">Övningar</h2>
-                    @if (@Model.WorkoutExercises != null && Model.WorkoutExercises.Any())
+                    @if (@Model?.WorkoutExercises != null && Model.WorkoutExercises.Any())
                     {
                         @for (int i = 0; i < Model.WorkoutExercises.Count; i++)
                         {
@@ -58,24 +58,29 @@
                                 <!-- Strength fields -->
                                 <div class="strength-fields">
                                     <div class="form-group mt-4">
-                                        <input asp-for="WorkoutExercises[@i].Sets" class="form-control" placeholder="Sets" value="@Model.WorkoutExercises[i].Sets" />
+                                        <input asp-for="WorkoutExercises[@i].Sets" class="form-control" placeholder="Sets"
+                                            value="@Model.WorkoutExercises[i].Sets" />
                                     </div>
                                     <div class="form-group mt-4">
-                                        <input asp-for="WorkoutExercises[@i].Reps" class="form-control" placeholder="Reps" value="@Model.WorkoutExercises[i].Reps" />
+                                        <input asp-for="WorkoutExercises[@i].Reps" class="form-control" placeholder="Reps"
+                                            value="@Model.WorkoutExercises[i].Reps" />
                                     </div>
                                     <div class="form-group mt-4">
-                                        <input asp-for="WorkoutExercises[@i].Weight" class="form-control" placeholder="Vikt (kg)"
-                                            value="@Model.WorkoutExercises[i].Weight" type="text" inputmode="decimal" data-val="false" />
+                                        <input asp-for="WorkoutExercises[@i].Weight" class="form-control"
+                                            placeholder="Vikt (kg)" value="@Model.WorkoutExercises[i].Weight" type="text"
+                                            inputmode="decimal" data-val="false" />
                                     </div>
                                 </div>
                                 <!-- Cardio fields -->
                                 <div class="form-group mt-4 cardio-fields">
                                     <input asp-for="WorkoutExercises[@i].Distance" class="form-control"
-                                        placeholder="Distans (km)" value="@Model.WorkoutExercises[i].Distance" type="text" inputmode="decimal" data-val="false" />
+                                        placeholder="Distans (km)" value="@Model.WorkoutExercises[i].Distance" type="text"
+                                        inputmode="decimal" data-val="false" />
                                 </div>
                                 <div class="form-group mt-4 cardio-fields">
                                     <input asp-for="WorkoutExercises[@i].ExerciseDetails" class="form-control"
-                                        placeholder="Detaljer (ex. 6x30s.)" value="@Model.WorkoutExercises[i].ExerciseDetails" />
+                                        placeholder="Detaljer (ex. 6x30s.)"
+                                        value="@Model.WorkoutExercises[i].ExerciseDetails" />
                                 </div>
                                 <div class="form-group my-3 d-flex justify-content-end">
                                     <button type="button" class="btn btn-danger btn-sm remove-ex-btn">Ta bort</button>
@@ -85,7 +90,6 @@
                     }
                     else
                     {
-
                         <div class="exercise-row">
                             <div class="form-group">
                                 <select class="form-control exercise-category" asp-items="ViewBag.Categories">
@@ -93,7 +97,7 @@
                                 </select>
                             </div>
                             <div class="form-group mt-4">
-                                <select asp-for="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
+                                <select name="WorkoutExercises[0].ExerciseId" class="form-control exercise-select"
                                     asp-items="ViewBag.Exercises">
                                     <option value="">Välj övning</option>
                                 </select>
